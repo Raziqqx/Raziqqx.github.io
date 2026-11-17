@@ -95,3 +95,13 @@ DETAIL PAGE
 3. The hero shows a real output (the MAPF replay), not a decoration. It animates once per load cycle
    as SMIL; with reduced motion a static first frame is served instead. That is the only ambient motion.
 4. Hazard yellow marks state and attention only: focus, the current page, the reading bar.
+
+## Changes made while building
+
+- **Hero: a project index instead of the MAPF replay.** The replay would have appeared twice (hero and the
+  mapf card). The site's job is "what is each project, in under a minute", so the hero's right column is a
+  table of contents (name and domain, linking to each sheet). Ambient motion is now only the MAPF replay and
+  the ROS 2 GIF inside their own sheets, and both swap to stills under reduced motion.
+- **Hazard yellow marks caveats.** A pale yellow block with a solid yellow edge holds each "synthetic data /
+  mock model" note: caution is what the colour means on a quay. Values in readings are not highlighted.
+- **Domain sits in its own narrow column** on wide screens (a title-block cell), and above the name on phones.

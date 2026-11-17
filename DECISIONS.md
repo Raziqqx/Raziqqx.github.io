@@ -43,3 +43,12 @@ of stat tiles.
     because SMIL and GIF animations cannot be stopped from CSS.
 13. **Themes follow the system setting** (`prefers-color-scheme`); no toggle, so no JavaScript is needed
     on the page at all.
+
+## Verification (M4)
+14. **Screenshots by playwright-core** driving the Chromium already in `~/.cache/ms-playwright`
+    (`CHROME=... npm run screenshots` with `npm run preview` running). Saved in `screenshots/`.
+15. **Fixed from screenshots:** a 624 px horizontal overflow at 360 px (grid items' default `min-width: auto`
+    let the code excerpt widen the page; set `min-width: 0`), and the detail-page gallery was capped at the
+    text measure, which made dense plots unreadable; it now uses the wider media width.
+16. **Lighthouse** 100 for accessibility (and the other three categories) on the home page and two case
+    studies; see results/lighthouse.md. Dark-theme contrast was computed by script (DESIGN_PLAN.md).
