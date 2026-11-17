@@ -1,7 +1,7 @@
 {
   "person": {
     "name": "Muhd Raziq",
-    "intro": "I build systems software in C++, Java and Python: simulators, planners, perception, ledgers and agent tooling. Each project below ships with tests, a way to reproduce its numbers, and a plain account of what it does not do.",
+    "intro": "I build systems software in C++, Java and Python: simulators, planners, perception, ledgers and agent tooling. Each featured project has tests or correctness checks, a way to reproduce its numbers, and notes on where they apply.",
     "links": [
       {
         "label": "GitHub",
@@ -494,7 +494,7 @@
         {
           "value": "0.857",
           "label": "abstention precision and recall, leave-one-out, on only 7 unanswerable questions",
-          "source": "results/abstention.md"
+          "source": "results/answer_quality.md"
         }
       ],
       "detail": {
