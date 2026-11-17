@@ -1,0 +1,62 @@
+{
+  "/media/terminal-digital-twin/screenshot.png": {
+    "width": 1280,
+    "height": 720,
+    "bytes": 83163
+  },
+  "/media/terminal-digital-twin/m2_policy_comparison.png": {
+    "width": 1800,
+    "height": 1230,
+    "bytes": 150344
+  },
+  "/media/mapf-fleet-planner/replay.svg": {
+    "width": 512,
+    "height": 536,
+    "bytes": 36980
+  },
+  "/media/mapf-fleet-planner/bench_success.png": {
+    "width": 2200,
+    "height": 374,
+    "bytes": 79500
+  },
+  "/media/ros2-autonomy-stack/demo.gif": {
+    "width": 512,
+    "height": 400,
+    "bytes": 332266
+  },
+  "/media/lidar-perception-pipeline/viewer.png": {
+    "width": 1280,
+    "height": 720,
+    "bytes": 36766
+  },
+  "/media/core-banking-ledger/grafana-dashboard.png": {
+    "width": 1600,
+    "height": 1300,
+    "bytes": 125262
+  },
+  "/media/core-banking-ledger/swagger-ui.png": {
+    "width": 1400,
+    "height": 2070,
+    "bytes": 166646
+  },
+  "/media/research-rag-platform/screenshot-ask.png": {
+    "width": 1200,
+    "height": 900,
+    "bytes": 185277
+  },
+  "/media/agent-redteam-eval/report_screenshot.png": {
+    "width": 1200,
+    "height": 900,
+    "bytes": 144524
+  },
+  "/media/mapf-fleet-planner/replay-still.svg": {
+    "width": 512,
+    "height": 536,
+    "bytes": 10075
+  },
+  "/media/ros2-autonomy-stack/demo-still.png": {
+    "width": 512,
+    "height": 400,
+    "bytes": 12443
+  }
+}

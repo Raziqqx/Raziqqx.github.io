@@ -1,0 +1,815 @@
+{
+  "person": {
+    "name": "Muhd Raziq",
+    "intro": "I build systems software in C++, Java and Python: simulators, planners, perception, ledgers and agent tooling. Each project below ships with tests, a way to reproduce its numbers, and a plain account of what it does not do.",
+    "links": [
+      {
+        "label": "GitHub",
+        "href": "https://github.com/Raziqqx"
+      },
+      {
+        "label": "LinkedIn",
+        "href": "https://www.linkedin.com/in/muhammadraziqbmr/"
+      }
+    ]
+  },
+  "featured": [
+    {
+      "slug": "terminal-digital-twin",
+      "name": "terminal-digital-twin",
+      "domain": "Port logistics",
+      "summary": "Simulates an automated container terminal and compares ways of dispatching its robot trucks, with a live 3D view.",
+      "stack": [
+        "C++20",
+        "OpenGL",
+        "Dear ImGui",
+        "CMake",
+        "Python"
+      ],
+      "github": "https://github.com/Raziqqx/terminal-digital-twin",
+      "run": {
+        "label": "See it working",
+        "href": "https://github.com/Raziqqx/terminal-digital-twin#see-it-working"
+      },
+      "caveat": "A simulation: no AGV congestion or yard-crane travel, so absolute throughput is an upper bound.",
+      "visual": {
+        "kind": "image",
+        "src": "/media/terminal-digital-twin/screenshot.png",
+        "alt": "3D view of a container terminal: four quay cranes at the berth with two vessels, eight yard blocks stacked with coloured containers, and AGVs driving between them, with control and KPI panels on either side.",
+        "caption": "The visualiser seven simulated hours in, Hungarian dispatch policy. docs/screenshot.png"
+      },
+      "metrics": [
+        {
+          "value": "+8.78 %",
+          "label": "moves per berth-hour, Hungarian dispatch vs nearest-idle, 4 AGVs (95 % CI +8.09 to +9.47, 10 paired seeds)",
+          "source": "results/m2_summary.md"
+        },
+        {
+          "value": "−18.22 %",
+          "label": "time quay cranes wait for an AGV, same comparison",
+          "source": "results/m2_summary.md"
+        },
+        {
+          "value": "3.43 M events/s",
+          "label": "simulation speed, one thread, 4 AGVs (2.22 ms per 7,604-event run)",
+          "source": "results/m3_benchmark.md"
+        }
+      ],
+      "detail": {
+        "problem": "In an automated terminal, quay cranes stall whenever no AGV is there to take the next container. Which AGV should serve which crane job, and when, decides how fast a vessel is turned around. Comparing dispatch rules fairly needs a simulator that gives identical results for the same seed, and policies that only see what a real terminal would know.",
+        "approach": [
+          "A discrete-event core orders events by (time, sequence number) and gives each subsystem its own random stream, so the same seed gives byte-identical output headless, sliced into steps, or driven by the window.",
+          "Three dispatch policies: nearest idle AGV, due-time greedy, and a hand-written Hungarian assignment re-solved at every dispatch decision over a rolling horizon.",
+          "Runs are paired by seed and reported with confidence intervals and p-values; the report lists where a policy is worse, not only where it wins.",
+          "What-if experiments add crane breakdowns, an arrival surge and a fleet-size sweep; outages run on calendar time so they are identical across policies."
+        ],
+        "decision": {
+          "title": "Policies see expectations only",
+          "body": "Dispatch policies get mean cycle times and forecasts, never the sampled durations the simulator will actually use. That stops any policy from winning with information a real terminal would not have, at the cost of making every policy look a little worse than an oracle."
+        },
+        "results": [
+          {
+            "value": "+8.78 %",
+            "label": "moves per berth-hour, Hungarian vs nearest-idle, 4 AGVs",
+            "source": "results/m2_summary.md"
+          },
+          {
+            "value": "+2.68 %",
+            "label": "the same comparison with 6 AGVs",
+            "source": "results/m2_summary.md"
+          },
+          {
+            "value": "−0.33 %",
+            "label": "the same comparison with 12 AGVs: Hungarian costs a little when AGVs are plentiful",
+            "source": "results/m2_summary.md"
+          },
+          {
+            "value": "−9.82 %",
+            "label": "vessel turnaround, Hungarian vs nearest-idle, 4 AGVs",
+            "source": "results/m2_summary.md"
+          },
+          {
+            "value": "+18.3 % to +25.3 %",
+            "label": "turnaround under an arrival surge (990 what-if runs)",
+            "source": "results/m3_summary.md"
+          },
+          {
+            "value": "11.22 ms",
+            "label": "median frame time with 3,010 cubes, on a CPU software rasteriser (llvmpipe)",
+            "source": "results/m4_frame_time.md"
+          }
+        ],
+        "media": [
+          {
+            "src": "/media/terminal-digital-twin/m2_policy_comparison.png",
+            "alt": "Plot of moves per berth-hour for each dispatch policy at 4, 6 and 12 AGVs.",
+            "caption": "Moves per berth-hour by policy and fleet size. results/m2_policy_comparison.png"
+          }
+        ]
+      }
+    },
+    {
+      "slug": "mapf-fleet-planner",
+      "name": "mapf-fleet-planner",
+      "domain": "Robot fleets",
+      "summary": "Plans collision-free routes for up to 100 robots sharing a grid, and checks every plan with a separate validator.",
+      "stack": [
+        "C++20",
+        "pybind11",
+        "Python",
+        "GoogleTest",
+        "CMake"
+      ],
+      "github": "https://github.com/Raziqqx/mapf-fleet-planner",
+      "run": {
+        "label": "See it working",
+        "href": "https://github.com/Raziqqx/mapf-fleet-planner#see-it-working"
+      },
+      "visual": {
+        "kind": "image",
+        "src": "/media/mapf-fleet-planner/replay.svg",
+        "still": "/media/mapf-fleet-planner/replay-still.svg",
+        "alt": "Animated grid map with walls. Twenty coloured discs move through narrow doorways between rooms, each stopping inside the square of its own colour.",
+        "caption": "20 robots on the room-32-32-4 map, planned by CBS and validated before export. docs/replay.svg"
+      },
+      "metrics": [
+        {
+          "value": "0 of 1,416",
+          "label": "solved plans rejected by the independent validator, across 2,000 benchmark runs",
+          "source": "results/bench_summary.md"
+        },
+        {
+          "value": "100 agents",
+          "label": "solved at 50 % or better on all 5 MovingAI maps by ECBS w=1.5; optimal CBS stops at 10–40",
+          "source": "README.md (Key results), from results/bench.csv"
+        },
+        {
+          "value": "1.58×",
+          "label": "low-level search speed-up from a bucket queue and arena vs the std::set baseline (prioritized planning)",
+          "source": "results/profile.md"
+        }
+      ],
+      "detail": {
+        "problem": "Warehouse and port fleets need many robots to reach their goals without colliding or swapping through each other. The joint search space grows exponentially with the number of robots, and a plan that is fast but subtly wrong is worse than no plan.",
+        "approach": [
+          "Three planners behind one library: prioritized planning, optimal Conflict-Based Search (CBS) and bounded-suboptimal ECBS, all sharing one templated low-level focal search.",
+          "Every plan is checked by a validator that shares no code or types with the planners; CBS is also checked against a brute-force joint-state Dijkstra on small maps.",
+          "A benchmark over the standard MovingAI maps, 10 to 100 agents, 10 scenarios each, with Python bindings and an animated SVG replay.",
+          "Search optimisations (binary heap, bucket queue, arena, struct-of-arrays) are runtime switches, so before/after numbers come from one binary doing identical work."
+        ],
+        "decision": {
+          "title": "One engine for CBS and ECBS",
+          "body": "With weight 1, ECBS is exactly CBS with a fewest-conflicts tie-break, so a single engine serves both and the brute-force optimality test exercises the ECBS code too. The cost is a slightly more general engine than plain CBS needs."
+        },
+        "results": [
+          {
+            "value": "0 invalid",
+            "label": "of 1,416 solved plans in 2,000 runs, re-checked by the validator",
+            "source": "results/bench_summary.md"
+          },
+          {
+            "value": "100 / 100 / 100 / 100 / 100",
+            "label": "largest agent count at ≥ 50 % success for ECBS w=1.5 on each of the 5 maps",
+            "source": "README.md (Key results)"
+          },
+          {
+            "value": "40 / 10 / 30 / 20 / 40",
+            "label": "the same for optimal CBS",
+            "source": "README.md (Key results)"
+          },
+          {
+            "value": "≤ 1.0213",
+            "label": "ECBS w=1.5 sum of costs relative to the CBS optimum, all maps",
+            "source": "README.md (Key results)"
+          },
+          {
+            "value": "1.89 Mnodes/s",
+            "label": "prioritized-planning search rate with bucket queue + arena (baseline 1.20)",
+            "source": "results/profile.md"
+          }
+        ],
+        "media": [
+          {
+            "src": "/media/mapf-fleet-planner/bench_success.png",
+            "alt": "Five panels, one per map, of success rate against number of agents for each planner; the CBS line drops first.",
+            "caption": "Success rate vs agent count per map. results/bench_success.png"
+          }
+        ]
+      }
+    },
+    {
+      "slug": "ros2-autonomy-stack",
+      "name": "ros2-autonomy-stack",
+      "domain": "Robotics",
+      "summary": "Lets a simulated warehouse robot localise, map, plan, drive to goals and recover when its path is blocked.",
+      "stack": [
+        "ROS 2 Jazzy",
+        "C++",
+        "BehaviorTree.CPP",
+        "Docker",
+        "Python"
+      ],
+      "github": "https://github.com/Raziqqx/ros2-autonomy-stack",
+      "run": {
+        "label": "See it working",
+        "href": "https://github.com/Raziqqx/ros2-autonomy-stack#see-it-working"
+      },
+      "caveat": "Runs on a custom 2D simulator, not Gazebo or a real robot: no wheel slip or sensor latency.",
+      "visual": {
+        "kind": "image",
+        "src": "/media/ros2-autonomy-stack/demo.gif",
+        "still": "/media/ros2-autonomy-stack/demo-still.png",
+        "alt": "Animated top-down view of a warehouse map: the robot follows a planned path from the dock to its goal.",
+        "caption": "A run from the dock to the goal in the 12 × 9 m warehouse. docs/demo.gif"
+      },
+      "metrics": [
+        {
+          "value": "17 %",
+          "label": "faster to the goal with Theta* + DWA than the A* + pure pursuit baseline",
+          "source": "README.md (Key results), from results/eval_summary.md"
+        },
+        {
+          "value": "0.024 m",
+          "label": "localisation error (ATE RMSE) at 3× sensor noise with 12 unmapped boxes",
+          "source": "README.md (Key results), from results/eval_summary.md"
+        },
+        {
+          "value": "10 of 11",
+          "label": "blocked-path runs where the behaviour tree's recovery still reached the goal",
+          "source": "README.md (Key results), from results/eval_summary.md"
+        }
+      ],
+      "detail": {
+        "problem": "A mobile robot only navigates well if every layer works at once: odometry drifts, maps are noisy, the planned path can be blocked, and the controller has to follow the plan smoothly. Each layer has to be testable on its own and measurable together.",
+        "approach": [
+          "An EKF fuses wheel odometry, IMU yaw and ICP scan matching against the prior map, with chi-square gates that reject bad matches.",
+          "Occupancy-grid mapping, A* and Theta* global planners, and pure pursuit and DWA local controllers.",
+          "A BehaviorTree.CPP v4 tree runs go-to-goal, patrol and docking, and recovers when the path is blocked.",
+          "The maths lives in ROS-free core libraries tested under sanitizers; everything builds and runs headless in Docker, and a 60-run evaluation sweeps planner, controller, noise and clutter."
+        ],
+        "decision": {
+          "title": "A small 2D simulator instead of Gazebo",
+          "body": "Gazebo needs several GB more disk and RAM and makes launch tests slow and flaky, and the metrics being evaluated are planar. The trade-off is no wheel-slip dynamics, no 3D effects and no sensor-latency model."
+        },
+        "results": [
+          {
+            "value": "60 runs",
+            "label": "evaluation over seeds 1–3, 6.2 minutes of wall time",
+            "source": "results/eval_summary.md"
+          },
+          {
+            "value": "23.9 s vs 28.9 s",
+            "label": "mean time to goal, Theta* + DWA vs A* + pure pursuit (17 % faster)",
+            "source": "results/eval_summary.md"
+          },
+          {
+            "value": "79 %",
+            "label": "lower integral of curvature² along the driven path, same comparison",
+            "source": "README.md (Key results)"
+          },
+          {
+            "value": "0.004 m to 0.024 m",
+            "label": "ATE RMSE from low noise and no clutter to 3× noise and 12 unmapped boxes; all 48 runs reached the goal",
+            "source": "README.md (Key results)"
+          },
+          {
+            "value": "10 of 11",
+            "label": "runs with a blocked-path recovery that reached the goal (91 %)",
+            "source": "README.md (Key results)"
+          }
+        ],
+        "media": []
+      }
+    },
+    {
+      "slug": "lidar-perception-pipeline",
+      "name": "lidar-perception-pipeline",
+      "domain": "Perception",
+      "summary": "Finds and tracks cars and pedestrians in 3D LiDAR scans, frame by frame, and measures every stage.",
+      "stack": [
+        "C++20",
+        "CMake",
+        "OpenGL",
+        "Python"
+      ],
+      "github": "https://github.com/Raziqqx/lidar-perception-pipeline",
+      "run": {
+        "label": "See it working",
+        "href": "https://github.com/Raziqqx/lidar-perception-pipeline#see-it-working"
+      },
+      "caveat": "Synthetic data: every number comes from a seeded generator that writes frames in the KITTI layout. Not comparable to KITTI or any real-data benchmark.",
+      "visual": {
+        "kind": "image",
+        "src": "/media/lidar-perception-pipeline/viewer.png",
+        "alt": "Top-down LiDAR point cloud with detected objects drawn as boxes and track identifiers.",
+        "caption": "The viewer on synthetic sequence 0000. docs/viewer.png"
+      },
+      "metrics": [
+        {
+          "value": "67.3 FPS",
+          "label": "single thread with spatial-hash clustering (brute force: 6.0 FPS), about 110k points per frame",
+          "source": "results/summary.md"
+        },
+        {
+          "value": "6.52×",
+          "label": "throughput with 8 threads of frame pipelining (441.4 FPS); per-frame latency does not drop",
+          "source": "results/summary.md"
+        },
+        {
+          "value": "0.661 / 0.640",
+          "label": "precision / recall at IoU 0.3 with L-shape boxes (PCA baseline: 0.500 / 0.486)",
+          "source": "results/summary.md"
+        }
+      ],
+      "detail": {
+        "problem": "A perception stack has to turn about 110,000 points per frame into a short list of tracked objects within a frame budget. Each stage costs time and each shortcut costs accuracy, so both have to be measured, not assumed.",
+        "approach": [
+          "Stages in order: ground removal, 0.2 m voxel downsampling, Euclidean or DBSCAN clustering, 3D box fitting, then Kalman-filter tracking with Hungarian assignment.",
+          "Three neighbour-search structures for clustering (brute force, k-d tree, spatial hash) behind one interface, timed per stage at p50 and p99.",
+          "PCA and L-shape box fitting compared on detection precision/recall, MOTA and IDF1.",
+          "Frame-level pipelining across threads; one script regenerates every result."
+        ],
+        "decision": {
+          "title": "Synthetic data in the KITTI layout",
+          "body": "KITTI, nuScenes, Waymo and PandaSet all need an account to download. A seeded ray-cast generator writes frames in the KITTI tracking layout, and the real KITTI loader reads them unchanged. Results are reproducible, but they come from idealised geometry, so the L-shape gain in particular is a best case."
+        },
+        "results": [
+          {
+            "value": "14.72 / 16.66 ms",
+            "label": "total p50 / p99 latency per frame, spatial hash, 1 thread",
+            "source": "results/summary.md"
+          },
+          {
+            "value": "160.83 → 8.65 ms",
+            "label": "clustering p50, brute force vs spatial hash",
+            "source": "results/summary.md"
+          },
+          {
+            "value": "0.543 / 0.527",
+            "label": "precision / recall at IoU 0.5, L-shape (PCA: 0.269 / 0.261)",
+            "source": "results/summary.md"
+          },
+          {
+            "value": "0.640 / 0.610",
+            "label": "MOTA / IDF1 with L-shape boxes (simplified definitions in the README)",
+            "source": "results/summary.md"
+          },
+          {
+            "value": "441.4 FPS",
+            "label": "8 threads, frame pipelining; MOTA and IDF1 identical for every thread count",
+            "source": "results/summary.md"
+          }
+        ],
+        "media": []
+      }
+    },
+    {
+      "slug": "core-banking-ledger",
+      "name": "core-banking-ledger",
+      "domain": "Banking",
+      "summary": "A banking backend that keeps every account balanced through concurrent payments, client retries and crashes mid-transfer.",
+      "stack": [
+        "Java 21",
+        "Spring Boot 3.5",
+        "PostgreSQL",
+        "Kafka (Redpanda)",
+        "Prometheus",
+        "Grafana",
+        "k6",
+        "Helm"
+      ],
+      "github": "https://github.com/Raziqqx/core-banking-ledger",
+      "run": {
+        "label": "See it working",
+        "href": "https://github.com/Raziqqx/core-banking-ledger#see-it-working"
+      },
+      "caveat": "Measured on a laptop with one app instance; earlier runs under other load reached about 300 req/s.",
+      "visual": {
+        "kind": "image",
+        "src": "/media/core-banking-ledger/grafana-dashboard.png",
+        "alt": "Grafana dashboard with panels for payment throughput, saga latency percentiles and transactional-outbox lag during a load test.",
+        "caption": "The Grafana dashboard during the k6 load test. docs/grafana-dashboard.png"
+      },
+      "metrics": [
+        {
+          "value": "380.4 req/s",
+          "label": "POST /payments under k6, 20 virtual users for 60 s, 0.00 % errors",
+          "source": "results/k6_payments.md"
+        },
+        {
+          "value": "85.9 ms",
+          "label": "p99 payment latency in the same run (p50 50.2 ms)",
+          "source": "results/k6_payments.md"
+        },
+        {
+          "value": "0",
+          "label": "unbalanced entries or balance mismatches in the ledger audit after the run",
+          "source": "results/k6_ledger_audit.json"
+        }
+      ],
+      "detail": {
+        "problem": "Moving money is easy until two requests touch the same account at once, a client retries, or the process dies halfway through a transfer. The ledger must never create or lose money and never let an account go negative, under all three.",
+        "approach": [
+          "A double-entry ledger in Postgres with signed postings and a funding account per currency, so the sum over all accounts is always zero and any created money shows up in the audit.",
+          "Payments run as an orchestrated saga: reserve a hold, post, notify, with compensation in reverse.",
+          "A transactional outbox feeds Kafka; consumers are idempotent on a unique event id, so delivery is at least once and the effect is exactly once.",
+          "JWT security, rate limiting, OpenAPI docs, Prometheus metrics, OpenTelemetry tracing, a Helm chart and a CI pipeline."
+        ],
+        "decision": {
+          "title": "Spring JDBC instead of JPA",
+          "body": "The ledger needs exact SQL: FOR UPDATE ordering, version-guarded updates, ON CONFLICT and SKIP LOCKED. JPA's hidden flushes and dirty checking make that harder to reason about. The cost is more hand-written SQL and mapping code."
+        },
+        "results": [
+          {
+            "value": "23,477",
+            "label": "payment requests in the 60 s k6 run, 5 % of them idempotent replays",
+            "source": "results/k6_payments.md"
+          },
+          {
+            "value": "50.2 / 70.1 / 85.9 ms",
+            "label": "latency p50 / p95 / p99",
+            "source": "results/k6_payments.md"
+          },
+          {
+            "value": "61 ms",
+            "label": "saga p99 from Prometheus during the run",
+            "source": "results/k6_prometheus_check.json"
+          },
+          {
+            "value": "4,000 ops, 16 threads",
+            "label": "concurrency stress test over 10 accounts: conservation held, no negative balance, clean audit",
+            "source": "results/concurrency_it.csv"
+          },
+          {
+            "value": "6,562",
+            "label": "optimistic-lock retries for 3,492 committed transfers, vs 0 with pessimistic locking",
+            "source": "results/concurrency_it.csv"
+          }
+        ],
+        "media": [
+          {
+            "src": "/media/core-banking-ledger/swagger-ui.png",
+            "alt": "Swagger UI listing the accounts, payments and ledger API endpoints.",
+            "caption": "The OpenAPI documentation. docs/swagger-ui.png"
+          }
+        ]
+      }
+    },
+    {
+      "slug": "research-rag-platform",
+      "name": "research-rag-platform",
+      "domain": "Search and retrieval",
+      "summary": "Answers questions about economics and finance papers with page-level citations, and says when the papers don't hold the answer.",
+      "stack": [
+        "Python",
+        "FastAPI",
+        "PostgreSQL + pgvector",
+        "React",
+        "TypeScript",
+        "MCP"
+      ],
+      "github": "https://github.com/Raziqqx/research-rag-platform",
+      "run": {
+        "label": "See it working",
+        "href": "https://github.com/Raziqqx/research-rag-platform#see-it-working"
+      },
+      "caveat": "Answers come from a mock extractive generator, not an LLM. Retrieval numbers are real runs on a 58-question gold set.",
+      "visual": {
+        "kind": "image",
+        "src": "/media/research-rag-platform/screenshot-ask.png",
+        "alt": "Web interface showing a question about a finance paper, an answer with numbered citations, and the cited passages with their page numbers.",
+        "caption": "The React UI answering a question with page citations. docs/screenshot-ask.png"
+      },
+      "metrics": [
+        {
+          "value": "0.853",
+          "label": "recall@10 with hybrid search and reranking (dense only: 0.647)",
+          "source": "results/retrieval_recursive.md"
+        },
+        {
+          "value": "0.672",
+          "label": "held-out MRR@10 of the best of 28 configurations, 5-fold cross-validated",
+          "source": "results/ablation_retrieval.md"
+        },
+        {
+          "value": "0.857",
+          "label": "abstention precision and recall, leave-one-out, on only 7 unanswerable questions",
+          "source": "results/abstention.md"
+        }
+      ],
+      "detail": {
+        "problem": "Finance papers are full of numbers, names and tables that dense embeddings blur together, and a research tool that cites the wrong page is worse than none. Retrieval quality is the bottleneck, so it has to be measured against a gold set rather than eyeballed.",
+        "approach": [
+          "Ingests openly licensed World Bank working papers and arXiv q-fin preprints into PostgreSQL + pgvector.",
+          "Hybrid search: BM25, dense vectors and reciprocal-rank fusion, then a cross-encoder reranker.",
+          "Citations are checked against the passage and page before an answer reaches the user; questions the corpus can't answer are refused before generation.",
+          "One service, three front doors: a FastAPI backend, a React + TypeScript UI and an MCP server."
+        ],
+        "decision": {
+          "title": "Abstain on the reranker score, before generation",
+          "body": "If the best reranked passage scores below a threshold, the system refuses without calling a model. That saves a call and avoids asking an LLM to judge its own ignorance. The threshold rests on only 7 unanswerable questions and moved a lot under leave-one-out, and the README says so."
+        },
+        "results": [
+          {
+            "value": "0.833 → 0.853",
+            "label": "recall@10, BM25 alone vs hybrid + rerank (recursive chunker)",
+            "source": "results/retrieval_recursive.md"
+          },
+          {
+            "value": "0.405 → 0.500",
+            "label": "dense-only MRR@10, MiniLM vs bge-small-en-v1.5",
+            "source": "results/ablation_retrieval.md"
+          },
+          {
+            "value": "139/139",
+            "label": "answer sentences supported by a cited passage; with a mock that copies sentences, this only proves the citation plumbing",
+            "source": "results/answer_quality.md"
+          },
+          {
+            "value": "37/51",
+            "label": "answers citing at least one gold page",
+            "source": "results/answer_quality.md"
+          },
+          {
+            "value": "1291.7 ms",
+            "label": "per query on CPU with reranking (BM25 alone: 1.5 ms)",
+            "source": "results/retrieval_recursive.md"
+          }
+        ],
+        "media": []
+      }
+    },
+    {
+      "slug": "agentic-threat-hunter",
+      "name": "agentic-threat-hunter",
+      "domain": "Security",
+      "summary": "An agent that hunts for attacker activity in security logs through read-only tools and writes Sigma detection rules for what it finds.",
+      "stack": [
+        "Python",
+        "MCP",
+        "Sigma",
+        "MITRE ATT&CK"
+      ],
+      "github": "https://github.com/Raziqqx/agentic-threat-hunter",
+      "run": {
+        "label": "See it working",
+        "href": "https://github.com/Raziqqx/agentic-threat-hunter#see-it-working"
+      },
+      "caveat": "Every number comes from a scripted mock LLM. It shows the pipeline, tools and safeguards work end to end, not how well an LLM hunts.",
+      "visual": {
+        "kind": "code",
+        "path": "service/server.py",
+        "lines": "48–60",
+        "lang": "python",
+        "code": "def build_server(data_dir: Path, audit_path: Path, allowed_tools: tuple[str, ...] = ALL_TOOLS) -> MCPServer:\n    \"\"\"Create the server. Only tools in `allowed_tools` (an allow-list) are registered.\"\"\"\n    unknown = set(allowed_tools) - set(ALL_TOOLS)\n    if unknown:\n        raise ValueError(f\"unknown tools in allow-list: {sorted(unknown)}\")\n    store = LogStore(data_dir)\n    audit = AuditLog(audit_path)\n    mcp = MCPServer(\"agentic-threat-hunter\")\n\n    def register(fn):\n        if fn.__name__ in allowed_tools:\n            mcp.tool(name=fn.__name__, description=fn.__doc__, annotations=READ_ONLY)(audited(audit, fn.__name__)(fn))\n        return fn",
+        "caption": "The allow-list is applied at registration, so a disallowed tool does not exist for the client, and every call is audited."
+      },
+      "metrics": [
+        {
+          "value": "42/45",
+          "label": "attack techniques detected by the agent, vs 1/45 for a single-prompt baseline",
+          "source": "results/eval.md"
+        },
+        {
+          "value": "45/45",
+          "label": "agent findings that passed the grounding check against the logs",
+          "source": "results/eval.md"
+        },
+        {
+          "value": "0.841",
+          "label": "precision of the Sigma rules the agent proposed (micro-averaged)",
+          "source": "results/eval.md"
+        }
+      ],
+      "detail": {
+        "problem": "An LLM agent with tool access to security logs is useful only if its findings are grounded in real evidence, and safe only if a hijacked model cannot do harm. Both need measuring against labelled attacks, against a fair baseline.",
+        "approach": [
+          "Seeded synthetic auth, process, network and web logs with labelled MITRE ATT&CK attack chains and false-positive bait.",
+          "An MCP server with five read-only tools, an allow-list, input validation and an append-only JSONL audit log.",
+          "A planner-to-tool loop with step, token and time budgets, and a human-approval gate that only records containment actions.",
+          "A separate Sigma validator scores the rules the agent writes; the agent is compared with a single-prompt baseline and a token-matched baseline."
+        ],
+        "decision": {
+          "title": "Read-only tools, with the approval gate on the agent side",
+          "body": "The server can only read; even the rule tool only drafts and dry-runs. Containment requests go to an agent-local gate that records a human's decision and executes nothing. A hijacked model's worst tool call is a read of synthetic logs."
+        },
+        "results": [
+          {
+            "value": "42/45 vs 1/45 vs 5/45",
+            "label": "techniques detected: agent, baseline, token-matched baseline",
+            "source": "results/eval.md"
+          },
+          {
+            "value": "45/45",
+            "label": "findings grounded",
+            "source": "results/eval.md"
+          },
+          {
+            "value": "0.841 / 0.458",
+            "label": "rule precision / recall (micro)",
+            "source": "results/eval.md"
+          },
+          {
+            "value": "71,959",
+            "label": "estimated input tokens per hunt for the agent, vs 17,575 for the plain baseline",
+            "source": "README.md (Key results), from results/eval.md"
+          },
+          {
+            "value": "0 of 3 seeds",
+            "label": "T1560.001 (archive before exfiltration) is never detected by any system",
+            "source": "README.md (Key results)"
+          }
+        ],
+        "media": []
+      }
+    },
+    {
+      "slug": "agent-redteam-eval",
+      "name": "agent-redteam-eval",
+      "domain": "AI safety",
+      "summary": "Attacks tool-using AI agents with prompt injection and measures what each defence actually stops.",
+      "stack": [
+        "Python",
+        "MCP",
+        "pytest",
+        "GitHub Actions"
+      ],
+      "github": "https://github.com/Raziqqx/agent-redteam-eval",
+      "run": {
+        "label": "See it working",
+        "href": "https://github.com/Raziqqx/agent-redteam-eval#see-it-working"
+      },
+      "caveat": "The agent's LLM and the LLM judge are mocks. Numbers show what each defence blocks, not how robust a real model is.",
+      "visual": {
+        "kind": "image",
+        "src": "/media/agent-redteam-eval/report_screenshot.png",
+        "alt": "HTML report with a table of attack success rates per defence condition and target, with confidence intervals.",
+        "caption": "The generated HTML report. docs/report_screenshot.png"
+      },
+      "metrics": [
+        {
+          "value": "0.588 → 0.067",
+          "label": "attack success rate on the toy agent, no defences vs all defences",
+          "source": "results/report.md"
+        },
+        {
+          "value": "0.254",
+          "label": "goal-hijack success that remains with all defences on: the clearest gap",
+          "source": "results/report.md"
+        },
+        {
+          "value": "0.333",
+          "label": "benign runs blocked with all defences on (12 of 36): the cost of those defences",
+          "source": "results/report.md"
+        }
+      ],
+      "detail": {
+        "problem": "Prompt injection against tool-using agents is easy to demonstrate and hard to measure. A useful harness has to score what an attack actually did (a file read, data sent out, a tool called), compare defences on the same draws, and count the benign work each defence breaks.",
+        "approach": [
+          "64 versioned seed cases (49 attacks across six categories, 15 benign tasks) plus 98 generated mutants, run under seven defence conditions and three seeds.",
+          "Two targets: a deliberately naive toy agent as a positive control, and the real agent loop and MCP server from agentic-threat-hunter.",
+          "A rule judge scores executed effects; a mock LLM judge is checked against it and against hand labels with Cohen's kappa.",
+          "Hash-keyed coin flips give every condition the same random draw, so the ablation is paired."
+        ],
+        "decision": {
+          "title": "Score executed effects, not intent",
+          "body": "An attack counts only if it changed something: a denied call needs no clean-up, so counting it would overstate risk. Near misses are still logged as denied for analysis."
+        },
+        "results": [
+          {
+            "value": "0.588 → 0.067",
+            "label": "toy agent ASR, no defences vs all (95 % CI 0.047–0.095)",
+            "source": "results/report.md"
+          },
+          {
+            "value": "0.357 → 0.069",
+            "label": "the same for the agentic-threat-hunter agent",
+            "source": "results/report.md"
+          },
+          {
+            "value": "0.639 → 0.083",
+            "label": "toy exfiltration with the output DLP filter alone",
+            "source": "README.md (Key results)"
+          },
+          {
+            "value": "0.828 / 0.711",
+            "label": "Cohen's kappa, rule judge vs mock LLM judge, toy / project-5 attack runs",
+            "source": "README.md (Key results), from results/report.md"
+          },
+          {
+            "value": "0.333",
+            "label": "benign false-positive rate with all defences, on a small n (12/36 and 9/27)",
+            "source": "results/report.md"
+          }
+        ],
+        "media": []
+      }
+    },
+    {
+      "slug": "limit-order-book",
+      "name": "Limit_order_book",
+      "domain": "Trading systems",
+      "summary": "A stock exchange order book and matching engine, checked by rebuilding every NASDAQ book from a full day of real market data.",
+      "stack": [
+        "C++17",
+        "CMake",
+        "Python"
+      ],
+      "github": "https://github.com/Raziqqx/Limit_order_book",
+      "run": {
+        "label": "Build and run",
+        "href": "https://github.com/Raziqqx/Limit_order_book#build-and-run"
+      },
+      "visual": {
+        "kind": "code",
+        "path": "include/lob/order_book.hpp",
+        "lines": "541–554",
+        "lang": "cpp",
+        "code": "  LOB_ALWAYS_INLINE void unlink(Handle lv, Handle h) {\n    PriceLevel& l = store_.levels[lv];\n    Order& o = store_.orders[h];\n    if (o.prev != kNull)\n      store_.orders[o.prev].next = o.next;\n    else\n      l.head = o.next;\n    if (o.next != kNull)\n      store_.orders[o.next].prev = o.prev;\n    else\n      l.tail = o.prev;\n    --l.count;\n    l.total -= o.qty;\n  }",
+        "caption": "O(1) cancel: each price level is an intrusive doubly linked FIFO, so removing an order is pointer surgery with no search."
+      },
+      "metrics": [
+        {
+          "value": "6.72 M msg/s",
+          "label": "full-day NASDAQ ITCH 5.0 replay, 268,744,780 messages, one pinned core (median of 3 runs)",
+          "source": "README.md (Results), raw in results/throughput*.txt"
+        },
+        {
+          "value": "56 / 668 ns",
+          "label": "per-message latency, p50 / p99",
+          "source": "README.md (Results), raw in results/latency.txt"
+        },
+        {
+          "value": "0 of 263,241,937",
+          "label": "top-of-book mismatches against an independent reference book",
+          "source": "README.md (Correctness evidence), raw in results/verify.txt"
+        }
+      ]
+    },
+    {
+      "slug": "market-data-feed-handler",
+      "name": "Market_Data_Feed_Handler_UDP",
+      "domain": "Trading systems",
+      "summary": "Receives a replayed NASDAQ feed over UDP multicast, recovers lost packets, and keeps its order books identical to the exchange's.",
+      "stack": [
+        "C++17",
+        "UDP multicast",
+        "epoll",
+        "CMake"
+      ],
+      "github": "https://github.com/Raziqqx/Market_Data_Feed_Handler_UDP",
+      "run": {
+        "label": "Build and run",
+        "href": "https://github.com/Raziqqx/Market_Data_Feed_Handler_UDP#build-test-run"
+      },
+      "visual": {
+        "kind": "code",
+        "path": "include/feed/spsc_queue.hpp",
+        "lines": "48–57",
+        "lang": "cpp",
+        "code": "  // Returns a slot to fill in place, or nullptr if the queue is full. Call publish() when done.\n  T* claim() noexcept {\n    const std::uint64_t t = tail_.load(std::memory_order_relaxed);\n    if (t - head_cache_ > mask_) {\n      head_cache_ = head_.load(std::memory_order_acquire);\n      if (t - head_cache_ > mask_) return nullptr;\n    }\n    return &slots_.get()[t & mask_];\n  }\n  void publish() noexcept { tail_.store(tail_.load(std::memory_order_relaxed) + 1, std::memory_order_release); }",
+        "caption": "The lock-free queue between the feed thread and the book thread: the producer decodes straight into the slot, then publishes with one release store."
+      },
+      "metrics": [
+        {
+          "value": "1,904 ns",
+          "label": "median wire-to-book latency, kernel receive timestamp to order-book update (p99 48,640 ns)",
+          "source": "results/drop_retransmit.handler.txt"
+        },
+        {
+          "value": "7 of 7",
+          "label": "loss scenarios, up to 1,402 gaps, ending with books identical to the publisher's",
+          "source": "README.md (\"Done when\" table), raw in results/*.handler.txt"
+        },
+        {
+          "value": "88.9 M/s",
+          "label": "64-byte updates through the SPSC queue on its own (hand-off p50 138 ns)",
+          "source": "results/queue_bench.txt"
+        }
+      ]
+    }
+  ],
+  "other": [
+    {
+      "name": "cpp-latency-lab",
+      "summary": "Nine small C++ experiments on caches, branch prediction, memory layout, dispatch and false sharing. Each prediction was written down before measuring, and the wrong ones are listed.",
+      "note": "Example: with fetch_add, two threads sharing a cache line made each increment about 4× slower.",
+      "source": "README.md (9. False sharing)",
+      "stack": [
+        "C++20",
+        "Google Benchmark"
+      ],
+      "github": "https://github.com/Raziqqx/cpp-latency-lab"
+    },
+    {
+      "name": "seam-carving",
+      "summary": "Content-aware image resizing with dynamic-programming, greedy and graph-cut seam finders. A six-person team assignment: I built the base (CMake, energy map, dynamic-programming seam finder, carving loop and command-line tool).",
+      "stack": [
+        "C++",
+        "OpenCV",
+        "Catch2"
+      ],
+      "github": "https://github.com/Raziqqx/seam-carving"
+    }
+  ]
+}
