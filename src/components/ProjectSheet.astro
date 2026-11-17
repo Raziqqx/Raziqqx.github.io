@@ -1,0 +1,84 @@
+---
+// One featured project on the home page: text and readings on the left, evidence on the right.
+import Media from './Media.astro';
+import CodeExcerpt from './CodeExcerpt.astro';
+import Readings from './Readings.astro';
+import BreakableName from './BreakableName.astro';
+
+const { p } = Astro.props as { p: any };
+const hasDetail = Boolean(p.detail);
+---
+<article class="sheet" id={p.slug} aria-labelledby={`${p.slug}-title`}>
+  <p class="domain">{p.domain}</p>
+  <div class="text">
+    <h2 id={`${p.slug}-title`} class="expanded name">
+      {hasDetail ? <a href={`/projects/${p.slug}/`}><BreakableName name={p.name} /></a> : <BreakableName name={p.name} />}
+    </h2>
+    <p class="summary">{p.summary}</p>
+    <ul class="tags" aria-label="Stack">{p.stack.map((t: string) => <li>{t}</li>)}</ul>
+    {p.caveat && <p class="caveat">{p.caveat}</p>}
+  </div>
+  <div class="visual">
+    {p.visual.kind === 'image'
+      ? <Media src={p.visual.src} still={p.visual.still} alt={p.visual.alt} caption={p.visual.caption} />
+      : <CodeExcerpt code={p.visual.code} path={p.visual.path} lines={p.visual.lines} lang={p.visual.lang} caption={p.visual.caption} github={p.github} />}
+  </div>
+  <div class="results">
+    <Readings items={p.metrics} caption={`Headline results for ${p.name}`} />
+    <ul class="links">
+      {hasDetail && <li><a href={`/projects/${p.slug}/`}>Read the case study<span class="visually-hidden"> for {p.name}</span></a></li>}
+      <li><a href={p.github}>Code on GitHub<span class="visually-hidden">: {p.name}</span></a></li>
+      <li><a href={p.run.href}>{p.run.label}<span class="visually-hidden">: {p.name}</span></a></li>
+    </ul>
+  </div>
+</article>
+
+<style>
+  .sheet {
+    display: grid;
+    gap: 1.1rem;
+    padding-block: 2.75rem;
+    border-top: 1px solid var(--rule);
+    scroll-margin-top: 1rem;
+  }
+  .domain {
+    margin: 0 0 -0.6rem;
+    color: var(--ink-2);
+    font-size: var(--step--1);
+    font-weight: 600;
+  }
+  .name {
+    margin: 0 0 0.75rem;
+    font-size: clamp(1.45rem, 1.05rem + 1.9vw, 2.35rem);
+  }
+  .name a { color: inherit; text-decoration: none; }
+  .name a:hover { text-decoration: underline; text-decoration-thickness: 3px; text-decoration-color: var(--signal); }
+  .summary {
+    margin: 0 0 0.9rem;
+    font-size: var(--step-1);
+    line-height: 1.4;
+    max-width: 40ch;
+  }
+  .text { display: grid; gap: 0; }
+  /* Grid items default to min-width: auto; long code lines would widen the page. */
+  .text, .visual, .results { min-width: 0; }
+  .text .tags { margin-bottom: 1rem; }
+  .results .links { margin-top: 1rem; }
+
+  /* Wide: domain | text + results | evidence */
+  @media (min-width: 1000px) {
+    .sheet {
+      grid-template-columns: 9rem minmax(0, 5fr) minmax(0, 6fr);
+      grid-template-areas:
+        'domain text visual'
+        'domain results visual';
+      grid-template-rows: auto 1fr;
+      column-gap: 2.5rem;
+      row-gap: 1.25rem;
+    }
+    .domain { grid-area: domain; margin: 0.55rem 0 0; }
+    .text { grid-area: text; }
+    .visual { grid-area: visual; align-self: start; }
+    .results { grid-area: results; }
+  }
+</style>

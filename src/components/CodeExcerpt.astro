@@ -1,0 +1,60 @@
+---
+// A verbatim excerpt from a repo, with its real line numbers and a link to the file on GitHub.
+interface Props {
+  code: string;
+  path: string;
+  lines: string; // "48–60"
+  lang: string;
+  caption: string;
+  github: string;
+}
+const { code, path, lines, lang, caption, github } = Astro.props;
+const start = Number(lines.split(/[–-]/)[0]);
+const end = Number(lines.split(/[–-]/)[1]);
+const href = `${github}/blob/HEAD/${path}#L${start}-L${end}`;
+const rows = code.split('\n').map((text, i) => ({ n: start + i, text }));
+const label = `Code from ${path}, lines ${lines}`;
+---
+<figure class="excerpt">
+  <div class="panel" tabindex="0" role="region" aria-label={label}>
+    <pre data-lang={lang}><code>{rows.map((r) => <span class="row"><span class="n" aria-hidden="true">{r.n}</span>{r.text}</span>)}</code></pre>
+  </div>
+  <figcaption>
+    {caption} <a class="path" href={href}>{path}, lines {lines}</a>
+  </figcaption>
+</figure>
+
+<style>
+  .excerpt { margin: 0; }
+  .panel {
+    background: var(--paper-2);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    overflow-x: auto;
+  }
+  pre {
+    margin: 0;
+    padding: 0.9rem 1rem 0.9rem 0;
+    font-size: 0.8rem;
+    line-height: 1.6;
+    tab-size: 2;
+  }
+  .row { display: block; white-space: pre; }
+  .n {
+    display: inline-block;
+    width: 3.2em;
+    padding-right: 1em;
+    margin-right: 0.25em;
+    text-align: right;
+    color: var(--ink-2);
+    user-select: none;
+  }
+  figcaption {
+    margin-top: 0.5rem;
+    font-size: var(--step--1);
+    color: var(--ink-2);
+    line-height: 1.45;
+    max-width: 68ch;
+  }
+  .path { font-size: 0.8rem; overflow-wrap: anywhere; }
+</style>

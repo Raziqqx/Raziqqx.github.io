@@ -1,0 +1,119 @@
+---
+import Base from '../layouts/Base.astro';
+import ProjectSheet from '../components/ProjectSheet.astro';
+import BreakableName from '../components/BreakableName.astro';
+import data from '../data/projects.json';
+
+const { person, featured, other } = data;
+---
+<Base
+  title={`${person.name}: systems software projects`}
+  description="Projects in C++, Java and Python: a container terminal simulator, multi-robot path planning, ROS 2 autonomy, LiDAR perception, a banking ledger, retrieval and security agents, and market-data systems. Every number links to its source."
+>
+  <section class="hero wrap" aria-labelledby="who">
+    <div class="intro">
+      <h1 id="who" class="expanded">{person.name}</h1>
+      <p class="lede">{person.intro}</p>
+      <ul class="links">
+        {person.links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+      </ul>
+    </div>
+    <nav class="index" aria-labelledby="index-title">
+      <h2 id="index-title" class="index-title">Projects on this page</h2>
+      <ul>
+        {featured.map((p) => (
+          <li>
+            <a href={`#${p.slug}`}><BreakableName name={p.name} /></a>
+            <span class="what">{p.domain}</span>
+          </li>
+        ))}
+        <li><a href="#other-work">Other work</a><span class="what">2 smaller repos</span></li>
+      </ul>
+    </nav>
+  </section>
+
+  <section class="wrap projects" aria-label="Featured projects">
+    {featured.map((p) => <ProjectSheet p={p} />)}
+  </section>
+
+  <section class="wrap other" id="other-work" aria-labelledby="other-title">
+    <h2 id="other-title" class="expanded other-title">Other work</h2>
+    <ul class="rows">
+      {other.map((o) => (
+        <li>
+          <h3 class="row-name"><a href={o.github}><BreakableName name={o.name} /></a></h3>
+          <div>
+            <p>{o.summary}</p>
+            {o.note && <p class="note">{o.note} <span class="source">Source: <span class="path">{o.source}</span></span></p>}
+            <ul class="tags" aria-label="Stack">{o.stack.map((t) => <li>{t}</li>)}</ul>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    display: grid;
+    gap: 2.5rem;
+    padding-block: 3rem 3.5rem;
+  }
+  h1 {
+    margin: 0 0 1.5rem;
+    font-size: clamp(2.6rem, 1.2rem + 7vw, 6.4rem);
+  }
+  .lede {
+    margin: 0 0 1.25rem;
+    font-size: var(--step-1);
+    line-height: 1.45;
+    max-width: 44ch;
+  }
+  .index-title {
+    margin: 0 0 0.6rem;
+    font-size: var(--step-0);
+    font-weight: 700;
+  }
+  .index ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 2px solid var(--ink);
+  }
+  .index li {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0 1rem;
+    padding-block: 0.45rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .index a { font-weight: 650; overflow-wrap: anywhere; }
+  .what { color: var(--ink-2); font-size: var(--step--1); align-self: center; }
+
+  @media (min-width: 1000px) {
+    .hero {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      column-gap: 4rem;
+      align-items: end;
+      padding-block: 5rem 4.5rem;
+    }
+  }
+
+  .other { padding-top: 2.75rem; border-top: 1px solid var(--rule); }
+  .other-title { margin: 0 0 1.5rem; font-size: clamp(1.45rem, 1.05rem + 1.9vw, 2.35rem); }
+  .rows { margin: 0; padding: 0; list-style: none; }
+  .rows > li {
+    display: grid;
+    gap: 0.4rem;
+    padding-block: 1.1rem;
+    border-top: 1px solid var(--rule);
+  }
+  .row-name { margin: 0; font-size: var(--step-1); font-stretch: 112%; font-weight: 750; }
+  .rows p { margin: 0 0 0.5rem; max-width: 68ch; }
+  .note { color: var(--ink-2); font-size: var(--step--1); }
+  .source { display: block; font-size: 0.78rem; }
+  @media (min-width: 1000px) {
+    .rows > li { grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); column-gap: 2.5rem; }
+  }
+</style>

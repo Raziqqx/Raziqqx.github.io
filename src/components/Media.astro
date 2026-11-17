@@ -1,0 +1,47 @@
+---
+// A figure for one repo image. Animated media (SVG with SMIL, GIF) gets a still for reduced motion,
+// because those animations cannot be paused from CSS.
+import meta from '../data/media-meta.json';
+
+interface Props {
+  src: string;
+  alt: string;
+  caption: string;
+  still?: string;
+  eager?: boolean;
+}
+const { src, alt, caption, still, eager = false } = Astro.props;
+const size = (meta as Record<string, { width: number; height: number }>)[src];
+if (!size) throw new Error(`No media-meta entry for ${src}: run npm run media`);
+// Captions end with the repo path of the file; set it in the code face.
+const m = caption.match(/^(.*?)\s*((?:docs|results)\/\S+)$/);
+const text = m ? m[1] : caption;
+const path = m ? m[2] : null;
+---
+<figure class="media">
+  <div class="frame">
+    <picture>
+      {still && <source srcset={still} media="(prefers-reduced-motion: reduce)" />}
+      <img src={src} alt={alt} width={size.width} height={size.height} loading={eager ? 'eager' : 'lazy'} decoding="async" />
+    </picture>
+  </div>
+  <figcaption>{text}{path && <> <span class="path">{path}</span></>}</figcaption>
+</figure>
+
+<style>
+  .media { margin: 0; }
+  .frame {
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    overflow: hidden;
+    background: #fff;
+  }
+  .frame img { width: 100%; }
+  figcaption {
+    margin-top: 0.5rem;
+    font-size: var(--step--1);
+    color: var(--ink-2);
+    line-height: 1.45;
+  }
+  .path { font-size: 0.8rem; overflow-wrap: anywhere; }
+</style>

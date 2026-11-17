@@ -1,0 +1,54 @@
+---
+// Measured results: the value with its unit, what was measured, and the file it came from.
+interface Reading { value: string; label: string; source: string }
+interface Props { items: Reading[]; caption: string; captionHidden?: boolean }
+const { items, caption, captionHidden = true } = Astro.props;
+---
+<table class="readings">
+  <caption class={captionHidden ? 'visually-hidden' : ''}>{caption}</caption>
+  <thead class="visually-hidden">
+    <tr><th scope="col">Value</th><th scope="col">What was measured, and the source file</th></tr>
+  </thead>
+  <tbody>
+    {items.map((r) => (
+      <tr>
+        <th scope="row" class="value">{r.value}</th>
+        <td>
+          {r.label}
+          <span class="source">Source: <span class="path">{r.source}</span></span>
+        </td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+
+<style>
+  .readings {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--step--1);
+    line-height: 1.45;
+  }
+  tr { border-top: 1px solid var(--rule); }
+  tr:last-child { border-bottom: 1px solid var(--rule); }
+  th, td { padding: 0.65rem 0; vertical-align: baseline; text-align: left; }
+  .value {
+    width: 38%;
+    padding-right: 1rem;
+    font-size: var(--step-1);
+    font-stretch: 87%;
+    font-weight: 750;
+    line-height: 1.15;
+    white-space: normal;
+  }
+  .source {
+    display: block;
+    margin-top: 0.2rem;
+    color: var(--ink-2);
+    font-size: 0.78rem;
+  }
+  .source .path { overflow-wrap: anywhere; }
+  @media (max-width: 420px) {
+    .value { width: 42%; font-size: 1.12rem; }
+  }
+</style>

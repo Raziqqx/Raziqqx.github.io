@@ -1,0 +1,105 @@
+---
+// Case study for each featured project that has a `detail` block in projects.json.
+import Base from '../../layouts/Base.astro';
+import Media from '../../components/Media.astro';
+import CodeExcerpt from '../../components/CodeExcerpt.astro';
+import Readings from '../../components/Readings.astro';
+import BreakableName from '../../components/BreakableName.astro';
+import data from '../../data/projects.json';
+
+export function getStaticPaths() {
+  return data.featured.filter((p) => 'detail' in p && p.detail).map((p) => ({ params: { slug: p.slug }, props: { p } }));
+}
+
+const { p } = Astro.props as { p: any };
+const d = p.detail;
+---
+<Base title={`${p.name}: ${p.domain.toLowerCase()} project by ${data.person.name}`} description={p.summary} showHeader>
+  <article class="wrap case">
+    <p class="back"><a href={`/#${p.slug}`}>All projects</a></p>
+
+    <header class="head">
+      <p class="domain">{p.domain}</p>
+      <h1 class="expanded"><BreakableName name={p.name} /></h1>
+      <p class="summary">{p.summary}</p>
+      <ul class="tags" aria-label="Stack">{p.stack.map((t: string) => <li>{t}</li>)}</ul>
+      <ul class="links">
+        <li><a href={p.github}>Code on GitHub</a></li>
+        <li><a href={p.run.href}>{p.run.label}</a></li>
+      </ul>
+      {p.caveat && <p class="caveat">{p.caveat}</p>}
+    </header>
+
+    <div class="lead-media">
+      {p.visual.kind === 'image'
+        ? <Media src={p.visual.src} still={p.visual.still} alt={p.visual.alt} caption={p.visual.caption} eager />
+        : <CodeExcerpt code={p.visual.code} path={p.visual.path} lines={p.visual.lines} lang={p.visual.lang} caption={p.visual.caption} github={p.github} />}
+    </div>
+
+    <div class="body">
+      <section aria-labelledby="problem">
+        <h2 id="problem">The problem</h2>
+        <p>{d.problem}</p>
+      </section>
+
+      <section aria-labelledby="approach">
+        <h2 id="approach">How it works</h2>
+        <ul class="steps">{d.approach.map((a: string) => <li>{a}</li>)}</ul>
+      </section>
+
+      <section aria-labelledby="decision">
+        <h2 id="decision">Key decision: {d.decision.title.charAt(0).toLowerCase() + d.decision.title.slice(1)}</h2>
+        <p>{d.decision.body}</p>
+      </section>
+
+      <section aria-labelledby="results">
+        <h2 id="results">Results</h2>
+        <Readings items={d.results} caption={`Results for ${p.name}`} />
+      </section>
+
+      {d.media.length > 0 && (
+        <section class="wide" aria-labelledby="more">
+          <h2 id="more">More from the repo</h2>
+          <div class="gallery">
+            {d.media.map((m: any) => <Media src={m.src} alt={m.alt} caption={m.caption} />)}
+          </div>
+        </section>
+      )}
+
+      <p class="more-docs">
+        The full design write-up, with alternatives considered and known limitations, is in
+        <a href={`${p.github}/blob/HEAD/docs/DESIGN.md`}>docs/DESIGN.md</a> in the repository.
+      </p>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .case { padding-top: 1.5rem; }
+  .back { margin: 0 0 2.5rem; font-weight: 600; }
+  .head { max-width: 52rem; display: grid; gap: 0; }
+  .domain { margin: 0 0 0.4rem; color: var(--ink-2); font-weight: 600; font-size: var(--step--1); }
+  h1 { margin: 0 0 1.25rem; font-size: clamp(2rem, 1rem + 4.6vw, 4.4rem); }
+  .summary { margin: 0 0 1rem; font-size: var(--step-1); line-height: 1.4; max-width: 44ch; }
+  .head .tags { margin-bottom: 1rem; }
+  .head .links { margin-bottom: 1.25rem; }
+  .lead-media { margin-block: 2.5rem 3.5rem; max-width: 64rem; }
+  .body > * { max-width: 46rem; }
+  .body > .wide { max-width: 64rem; }
+  .body section { margin-bottom: 3rem; }
+  h2 {
+    margin: 0 0 0.9rem;
+    font-size: var(--step-2);
+    font-stretch: 112%;
+    font-weight: 750;
+    line-height: 1.15;
+    padding-top: 0.9rem;
+    border-top: 2px solid var(--ink);
+  }
+  .body p { max-width: 68ch; margin: 0 0 1rem; }
+  .steps { margin: 0; padding-left: 1.2rem; }
+  .steps li { margin-bottom: 0.7rem; max-width: 66ch; }
+  .steps li::marker { color: var(--ink-2); }
+  .gallery { display: grid; gap: 2rem; }
+  .more-docs { color: var(--ink-2); }
+</style>

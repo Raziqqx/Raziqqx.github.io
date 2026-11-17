@@ -1,0 +1,6 @@
+---
+// Repo names like Market_Data_Feed_Handler_UDP are long in expanded type: allow breaks after _ and -.
+const { name } = Astro.props as { name: string };
+const parts = name.split(/(?<=[_-])/);
+---
+{parts.map((p, i) => <>{p}{i < parts.length - 1 && <wbr />}</>)}
