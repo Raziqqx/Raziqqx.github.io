@@ -52,3 +52,8 @@ of stat tiles.
     text measure, which made dense plots unreadable; it now uses the wider media width.
 16. **Lighthouse** 100 for accessibility (and the other three categories) on the home page and two case
     studies; see results/lighthouse.md. Dark-theme contrast was computed by script (DESIGN_PLAN.md).
+
+## Deploy (M5)
+17. **GitHub Actions → Pages** with the official upload-pages-artifact / deploy-pages actions, Node 20 in CI
+    (Astro 4.16 supports it; local builds use Node 18.19). Not pushed: the repo `Raziqqx/Raziqqx.github.io`
+    has to be created by the user and Pages set to "GitHub Actions".
