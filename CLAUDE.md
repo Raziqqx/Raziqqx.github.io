@@ -29,12 +29,8 @@ Featured (full cards, in this order — strongest first):
 6. research-rag-platform (Python, React) — `docs/screenshot-ask.png`
 7. agentic-threat-hunter (Python, MCP) — no image yet: use a short terminal/code snippet instead
 8. agent-redteam-eval (Python) — `docs/report_screenshot.png`
-9. Limit_order_book (C++) — GitHub only; snippet from its README/code
-10. Market_Data_Feed_Handler_UDP (C++) — GitHub only; snippet from its README/code
-(9 and 10 get full cards with their own snippet, user decision 2026-11-17, but no detail page
-unless their README has enough for one.)
-
-Secondary ("Other work", compact rows): cpp-latency-lab, seam-carving (team assignment: say so). Before listing each, open its
+Secondary ("Other work", compact rows, in this order): Limit_order_book, Market_Data_Feed_Handler_UDP
+(moved from featured, user decision 2026-11-17), cpp-latency-lab, seam-carving (team assignment: say so). Before listing each, open its
 GitHub README; drop any that has no README or doesn't build.
 Never show: DATA-STRUCT-HW-2 (coursework), forks, empty repos.
 

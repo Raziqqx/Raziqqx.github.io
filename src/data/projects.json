@@ -704,92 +704,34 @@
         ],
         "media": []
       }
-    },
+    }
+  ],
+  "other": [
     {
-      "slug": "limit-order-book",
       "name": "Limit_order_book",
-      "domain": "Trading systems",
       "summary": "A stock exchange order book and matching engine, checked by rebuilding every NASDAQ book from a full day of real market data.",
+      "note": "Example: replayed a full day of NASDAQ ITCH 5.0 (268,744,780 messages) at 6.72 M msg/s on one pinned core, with 0 of 263,241,937 top-of-book mismatches against an independent reference book.",
+      "source": "README.md (Results, Correctness evidence)",
       "stack": [
         "C++17",
         "CMake",
         "Python"
       ],
-      "github": "https://github.com/Raziqqx/Limit_order_book",
-      "run": {
-        "label": "Build and run",
-        "href": "https://github.com/Raziqqx/Limit_order_book#build-and-run"
-      },
-      "visual": {
-        "kind": "code",
-        "path": "include/lob/order_book.hpp",
-        "lines": "541–554",
-        "lang": "cpp",
-        "code": "  LOB_ALWAYS_INLINE void unlink(Handle lv, Handle h) {\n    PriceLevel& l = store_.levels[lv];\n    Order& o = store_.orders[h];\n    if (o.prev != kNull)\n      store_.orders[o.prev].next = o.next;\n    else\n      l.head = o.next;\n    if (o.next != kNull)\n      store_.orders[o.next].prev = o.prev;\n    else\n      l.tail = o.prev;\n    --l.count;\n    l.total -= o.qty;\n  }",
-        "caption": "O(1) cancel: each price level is an intrusive doubly linked FIFO, so removing an order is pointer surgery with no search."
-      },
-      "metrics": [
-        {
-          "value": "6.72 M msg/s",
-          "label": "full-day NASDAQ ITCH 5.0 replay, 268,744,780 messages, one pinned core (median of 3 runs)",
-          "source": "README.md (Results), raw in results/throughput*.txt"
-        },
-        {
-          "value": "56 / 668 ns",
-          "label": "per-message latency, p50 / p99",
-          "source": "README.md (Results), raw in results/latency.txt"
-        },
-        {
-          "value": "0 of 263,241,937",
-          "label": "top-of-book mismatches against an independent reference book",
-          "source": "README.md (Correctness evidence), raw in results/verify.txt"
-        }
-      ]
+      "github": "https://github.com/Raziqqx/Limit_order_book"
     },
     {
-      "slug": "market-data-feed-handler",
       "name": "Market_Data_Feed_Handler_UDP",
-      "domain": "Trading systems",
       "summary": "Receives a replayed NASDAQ feed over UDP multicast, recovers lost packets, and keeps its order books identical to the exchange's.",
+      "note": "Example: median wire-to-book latency of 1,904 ns, and 7 of 7 loss scenarios ended with books identical to the publisher's.",
+      "source": "results/drop_retransmit.handler.txt, README.md (\"Done when\" table)",
       "stack": [
         "C++17",
         "UDP multicast",
         "epoll",
         "CMake"
       ],
-      "github": "https://github.com/Raziqqx/Market_Data_Feed_Handler_UDP",
-      "run": {
-        "label": "Build and run",
-        "href": "https://github.com/Raziqqx/Market_Data_Feed_Handler_UDP#build-test-run"
-      },
-      "visual": {
-        "kind": "code",
-        "path": "include/feed/spsc_queue.hpp",
-        "lines": "48–57",
-        "lang": "cpp",
-        "code": "  // Returns a slot to fill in place, or nullptr if the queue is full. Call publish() when done.\n  T* claim() noexcept {\n    const std::uint64_t t = tail_.load(std::memory_order_relaxed);\n    if (t - head_cache_ > mask_) {\n      head_cache_ = head_.load(std::memory_order_acquire);\n      if (t - head_cache_ > mask_) return nullptr;\n    }\n    return &slots_.get()[t & mask_];\n  }\n  void publish() noexcept { tail_.store(tail_.load(std::memory_order_relaxed) + 1, std::memory_order_release); }",
-        "caption": "The lock-free queue between the feed thread and the book thread: the producer decodes straight into the slot, then publishes with one release store."
-      },
-      "metrics": [
-        {
-          "value": "1,904 ns",
-          "label": "median wire-to-book latency, kernel receive timestamp to order-book update (p99 48,640 ns)",
-          "source": "results/drop_retransmit.handler.txt"
-        },
-        {
-          "value": "7 of 7",
-          "label": "loss scenarios, up to 1,402 gaps, ending with books identical to the publisher's",
-          "source": "README.md (\"Done when\" table), raw in results/*.handler.txt"
-        },
-        {
-          "value": "88.9 M/s",
-          "label": "64-byte updates through the SPSC queue on its own (hand-off p50 138 ns)",
-          "source": "results/queue_bench.txt"
-        }
-      ]
-    }
-  ],
-  "other": [
+      "github": "https://github.com/Raziqqx/Market_Data_Feed_Handler_UDP"
+    },
     {
       "name": "cpp-latency-lab",
       "summary": "Nine small C++ experiments on caches, branch prediction, memory layout, dispatch and false sharing. Each prediction was written down before measuring, and the wrong ones are listed.",
