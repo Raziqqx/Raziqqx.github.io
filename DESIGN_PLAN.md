@@ -39,14 +39,25 @@ ink on signal 9.8:1. Dark: ink 14.1:1, ink-2 7.8:1, link 8.6:1. Signal on light 
 so yellow is never used alone as a line on the light theme: the focus ring is a two-tone ring
 (3px ink outline with a yellow halo), and yellow fills always carry ink text.
 
-### Type
+### Type (reworked 2026-11-17 after user feedback)
 
-- Archivo (variable, wght 100–900, wdth 62–125), self-hosted through Fontsource.
-  - Name and project titles: wdth 125, weight 800, tight tracking. This is the one loud thing.
-  - Body: wdth 100, weight 400, 1.0625rem / 1.55, measure ≤ 68ch.
-  - Reading values: wdth 87, weight 700, tabular figures.
-- IBM Plex Mono only inside code excerpts and for file paths in captions (they are code).
-- Scale (ratio 1.25 from 17px): 13.6 / 17 / 21.25 / 26.5 / 33 / 41.5; hero name clamps 40–88px.
+The first build used Archivo at its expanded width (wdth 125, weight 800) for names and titles. The user
+found it read as "weird and AI generated": stretched heavy wide headings are a template tell, and project
+repo names in that face wrapped mid-word. Replaced with:
+
+- **IBM Plex Sans** for all text, weights 400 / 500 / 600 only, normal width. An engineering face (IBM's,
+  drawn for technical documentation) that suits the subject without performing it. Self-hosted through
+  Fontsource, latin subset, `font-display: swap`.
+- **IBM Plex Mono** (400) only for code excerpts, file paths and repo names, which are identifiers.
+- One scale, ratio 1.25 from a 17px body: 13.6 (`--step--1`: captions, tags, labels, source lines) /
+  17 (body, line-height 1.6, measure ≤ 68ch) / 21.25 (`--step-1`: h3, other-work names, reading values,
+  summaries on case studies) / 26.6 (`--step-2`: project titles on phones, case-study section heads on
+  desktop) / 33.2 (`--step-3`: project titles on desktop) / 41.5 (case-study h1 on desktop).
+- Hero name: 600, tracking −0.022em, `clamp(2.25rem, 1.75rem + 2.2vw, 3.5rem)` (36px at 360, 56px at 1440),
+  capped at 12em so "Muhammad Raziq / Bin Mohd Rafig" sets on two lines at both widths.
+- Projects show a human title (`title` in projects.json) with the repo name as a small mono line under it,
+  so nothing breaks mid-word. Headings use `text-wrap: balance`.
+- Reading values: 600 at `--step-1` (`--step-0` under 420px), tabular figures.
 - Sentence case everywhere. No all-caps labels, no eyebrows.
 
 ### Layout
@@ -91,9 +102,13 @@ DETAIL PAGE
 
 1. Evidence over adjectives: every number shows its unit and its source file; caveats (synthetic
    data, mock LLM) sit next to the numbers they qualify, not in a footnote.
-2. One loud thing: the expanded-width name type. Everything else is quiet: rules, grey paper, no shadows.
+2. One loud thing: the hazard-yellow signal (caveats, focus, reading-progress bar). Type is quiet and
+   technical: Plex Sans at one scale, rules, grey paper, no shadows.
 3. The hero shows a real output (the MAPF replay), not a decoration. It animates once per load cycle
-   as SMIL; with reduced motion a static first frame is served instead. That is the only ambient motion.
+   as SMIL; with reduced motion a static first frame is served instead.
+5. Scroll reveals (added at the user's request): each sheet's text column rises in, then its media
+   (slight scale), then its reading rows in sequence; a 3px yellow progress bar tracks the page. Opacity and
+   transform only, 600ms ease-out, once per element; off under reduced motion and without JS.
 4. Hazard yellow marks state and attention only: focus, the current page, the reading bar.
 
 ## Changes made while building

@@ -10,25 +10,26 @@ const hasDetail = Boolean(p.detail);
 ---
 <article class="sheet" id={p.slug} aria-labelledby={`${p.slug}-title`}>
   <p class="domain">{p.domain}</p>
-  <div class="text">
-    <h2 id={`${p.slug}-title`} class="expanded name">
-      {hasDetail ? <a href={`/projects/${p.slug}/`}><BreakableName name={p.name} /></a> : <BreakableName name={p.name} />}
+  <div class="text" data-reveal style="--d:0">
+    <h2 id={`${p.slug}-title`} class="name">
+      {hasDetail ? <a href={`/projects/${p.slug}/`}>{p.title}</a> : p.title}
     </h2>
+    <p class="repo"><BreakableName name={p.name} /></p>
     <p class="summary">{p.summary}</p>
     <ul class="tags" aria-label="Stack">{p.stack.map((t: string) => <li>{t}</li>)}</ul>
     {p.caveat && <p class="caveat">{p.caveat}</p>}
   </div>
-  <div class="visual">
+  <div class="visual" data-reveal="media" style="--d:140">
     {p.visual.kind === 'image'
       ? <Media src={p.visual.src} still={p.visual.still} alt={p.visual.alt} caption={p.visual.caption} />
       : <CodeExcerpt code={p.visual.code} path={p.visual.path} lines={p.visual.lines} lang={p.visual.lang} caption={p.visual.caption} github={p.github} />}
   </div>
   <div class="results">
-    <Readings items={p.metrics} caption={`Headline results for ${p.name}`} />
-    <ul class="links">
-      {hasDetail && <li><a href={`/projects/${p.slug}/`}>Read the case study<span class="visually-hidden"> for {p.name}</span></a></li>}
-      <li><a href={p.github}>Code on GitHub<span class="visually-hidden">: {p.name}</span></a></li>
-      <li><a href={p.run.href}>{p.run.label}<span class="visually-hidden">: {p.name}</span></a></li>
+    <Readings items={p.metrics} caption={`Headline results for ${p.title}`} reveal />
+    <ul class="links" data-reveal="row" style={`--d:${200 + p.metrics.length * 90}`}>
+      {hasDetail && <li><a href={`/projects/${p.slug}/`}>Read the case study<span class="visually-hidden"> for {p.title}</span></a></li>}
+      <li><a href={p.github}>Code on GitHub<span class="visually-hidden">: {p.title}</span></a></li>
+      <li><a href={p.run.href}>{p.run.label}<span class="visually-hidden">: {p.title}</span></a></li>
     </ul>
   </div>
 </article>
@@ -45,19 +46,20 @@ const hasDetail = Boolean(p.detail);
     margin: 0 0 -0.6rem;
     color: var(--ink-2);
     font-size: var(--step--1);
-    font-weight: 600;
+    font-weight: 500;
   }
+  /* step-2 on phones up to step-3 on desktop */
   .name {
-    margin: 0 0 0.75rem;
-    font-size: clamp(1.45rem, 1.05rem + 1.9vw, 2.35rem);
+    margin: 0 0 0.3rem;
+    font-size: clamp(var(--step-2), 1.3rem + 0.9vw, var(--step-3));
+    line-height: 1.15;
   }
+  .repo { margin-bottom: 0.9rem; }
   .name a { color: inherit; text-decoration: none; }
   .name a:hover { text-decoration: underline; text-decoration-thickness: 3px; text-decoration-color: var(--signal); }
   .summary {
-    margin: 0 0 0.9rem;
-    font-size: var(--step-1);
-    line-height: 1.4;
-    max-width: 40ch;
+    margin: 0 0 1rem;
+    max-width: 52ch;
   }
   .text { display: grid; gap: 0; }
   /* Grid items default to min-width: auto; long code lines would widen the page. */
@@ -76,7 +78,7 @@ const hasDetail = Boolean(p.detail);
       column-gap: 2.5rem;
       row-gap: 1.25rem;
     }
-    .domain { grid-area: domain; margin: 0.55rem 0 0; }
+    .domain { grid-area: domain; margin: 0.6rem 0 0; }
     .text { grid-area: text; }
     .visual { grid-area: visual; align-self: start; }
     .results { grid-area: results; }

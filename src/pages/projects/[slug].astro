@@ -14,13 +14,14 @@ export function getStaticPaths() {
 const { p } = Astro.props as { p: any };
 const d = p.detail;
 ---
-<Base title={`${p.name}: ${p.domain.toLowerCase()} project by ${data.person.name}`} description={p.summary} showHeader>
+<Base title={`${p.title} (${p.name}), a ${p.domain.toLowerCase()} project by ${data.person.name}`} description={p.summary} showHeader>
   <article class="wrap case">
     <p class="back"><a href={`/#${p.slug}`}>All projects</a></p>
 
     <header class="head">
       <p class="domain">{p.domain}</p>
-      <h1 class="expanded"><BreakableName name={p.name} /></h1>
+      <h1>{p.title}</h1>
+      <p class="repo"><BreakableName name={p.name} /></p>
       <p class="summary">{p.summary}</p>
       <ul class="tags" aria-label="Stack">{p.stack.map((t: string) => <li>{t}</li>)}</ul>
       <ul class="links">
@@ -37,28 +38,28 @@ const d = p.detail;
     </div>
 
     <div class="body">
-      <section aria-labelledby="problem">
+      <section data-reveal aria-labelledby="problem">
         <h2 id="problem">The problem</h2>
         <p>{d.problem}</p>
       </section>
 
-      <section aria-labelledby="approach">
+      <section data-reveal aria-labelledby="approach">
         <h2 id="approach">How it works</h2>
         <ul class="steps">{d.approach.map((a: string) => <li>{a}</li>)}</ul>
       </section>
 
-      <section aria-labelledby="decision">
+      <section data-reveal aria-labelledby="decision">
         <h2 id="decision">Key decision: {d.decision.title.charAt(0).toLowerCase() + d.decision.title.slice(1)}</h2>
         <p>{d.decision.body}</p>
       </section>
 
-      <section aria-labelledby="results">
+      <section data-reveal aria-labelledby="results">
         <h2 id="results">Results</h2>
-        <Readings items={d.results} caption={`Results for ${p.name}`} />
+        <Readings items={d.results} caption={`Results for ${p.title}`} reveal />
       </section>
 
       {d.media.length > 0 && (
-        <section class="wide" aria-labelledby="more">
+        <section class="wide" data-reveal aria-labelledby="more">
           <h2 id="more">More from the repo</h2>
           <div class="gallery">
             {d.media.map((m: any) => <Media src={m.src} alt={m.alt} caption={m.caption} />)}
@@ -76,11 +77,13 @@ const d = p.detail;
 
 <style>
   .case { padding-top: 1.5rem; }
-  .back { margin: 0 0 2.5rem; font-weight: 600; }
+  .back { margin: 0 0 2.5rem; font-weight: 500; }
   .head { max-width: 52rem; display: grid; gap: 0; }
-  .domain { margin: 0 0 0.4rem; color: var(--ink-2); font-weight: 600; font-size: var(--step--1); }
-  h1 { margin: 0 0 1.25rem; font-size: clamp(2rem, 1rem + 4.6vw, 4.4rem); }
-  .summary { margin: 0 0 1rem; font-size: var(--step-1); line-height: 1.4; max-width: 44ch; }
+  .domain { margin: 0 0 0.4rem; color: var(--ink-2); font-weight: 500; font-size: var(--step--1); }
+  /* The page's h1 is the top of the scale (step-3 on desktop, plus one step); never wider than the head column. */
+  h1 { margin: 0 0 0.35rem; font-size: clamp(var(--step-2), 1.2rem + 2vw, 2.6rem); line-height: 1.12; letter-spacing: -0.02em; }
+  .repo { margin-bottom: 1.25rem; }
+  .summary { margin: 0 0 1rem; font-size: var(--step-1); line-height: 1.5; max-width: 44ch; }
   .head .tags { margin-bottom: 1rem; }
   .head .links { margin-bottom: 1.25rem; }
   .lead-media { margin-block: 2.5rem 3.5rem; max-width: 64rem; }
@@ -89,14 +92,12 @@ const d = p.detail;
   .body section { margin-bottom: 3rem; }
   h2 {
     margin: 0 0 0.9rem;
-    font-size: var(--step-2);
-    font-stretch: 112%;
-    font-weight: 750;
-    line-height: 1.15;
+    font-size: clamp(var(--step-1), 1.1rem + 0.6vw, var(--step-2));
+    line-height: 1.25;
     padding-top: 0.9rem;
     border-top: 2px solid var(--ink);
   }
-  .body p { max-width: 68ch; margin: 0 0 1rem; }
+  .body p { max-width: var(--measure); margin: 0 0 1rem; }
   .steps { margin: 0; padding-left: 1.2rem; }
   .steps li { margin-bottom: 0.7rem; max-width: 66ch; }
   .steps li::marker { color: var(--ink-2); }

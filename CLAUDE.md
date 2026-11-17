@@ -1,6 +1,6 @@
 # Portfolio site: rules for every session
 
-A personal portfolio site for Muhd Raziq (GitHub: Raziqqx). Its single job: let a recruiter or engineer
+A personal portfolio site for Muhammad Raziq Bin Mohd Rafig (GitHub: Raziqqx). Its single job: let a recruiter or engineer
 see in under a minute what each project is, what it proves, and click through to the repo.
 
 ## Design

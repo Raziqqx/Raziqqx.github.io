@@ -57,3 +57,20 @@ of stat tiles.
 17. **GitHub Actions → Pages** with the official upload-pages-artifact / deploy-pages actions, Node 20 in CI
     (Astro 4.16 supports it; local builds use Node 18.19). Not pushed: the repo `Raziqqx/Raziqqx.github.io`
     has to be created by the user and Pages set to "GitHub Actions".
+
+## Typography and motion rework (2026-11-17, user feedback)
+18. **Archivo expanded dropped for IBM Plex Sans 400/500/600 + Plex Mono.** The wide 800-weight headings read
+    as generated and broke repo names mid-word. Plex is a documentation face from an engineering company; one
+    1.25 scale (17px body) now covers every page. Details in DESIGN_PLAN.md, Type.
+19. **Human project titles** (`title` in projects.json) with the repo name as a mono subtitle. Titles are plain
+    descriptions of what each repo is; "other work" rows keep repo names (they are compact links to GitHub).
+20. **Display name is "Muhammad Raziq Bin Mohd Rafig"** (user request). Hero name sized to sit on two lines.
+21. **Scroll reveals via IntersectionObserver, not CSS scroll timelines**: works in every current browser and
+    each element animates once. The hidden start state is behind `.js` on `<html>` (set by an inline head
+    script only when IntersectionObserver exists) and inside `prefers-reduced-motion: no-preference`, so
+    no-JS and reduced-motion visitors get the full page with no motion. The hero is not animated, so the
+    first paint (and LCP) is unchanged. The skill warns that per-section fade-ups are a generic default;
+    the user asked for them, so they are kept short (18px travel, 600ms) and run once.
+22. **Screenshots renamed**: `-top` is the viewport at scrollY 0 (the old `-fold` shots were mislabeled),
+    `-mid` is the ROS 2 sheet after its reveals, `-full` is the whole page after scrolling through it.
+    Captured against `python3 -m http.server -d dist`.
