@@ -1,0 +1,151 @@
+---
+// All projects: the eight featured ones grouped by area, then the smaller repos.
+import Base from '../../layouts/Base.astro';
+import Thumb from '../../components/Thumb.astro';
+import BreakableName from '../../components/BreakableName.astro';
+import data from '../../data/projects.json';
+
+const { person, areas, featured, other } = data;
+const groups = areas.map((a) => ({ ...a, projects: featured.filter((p) => p.area === a.id) }));
+---
+<Base
+  title={`Projects by ${person.name}`}
+  description="Eight projects with case studies, grouped by area (robots and autonomy, logistics and finance systems, AI and security), and four smaller C++ repos."
+  section="projects"
+>
+  <div class="wrap">
+    <header class="head">
+      <h1 class="page-title rise" style="--i:0">Projects</h1>
+      <p class="lede rise" style="--i:1">
+        {featured.length} projects with case studies, grouped by area, then {other.length} smaller repos. Each number
+        names the file in the repository it came from.
+      </p>
+      <nav class="rise" style="--i:2" aria-label="Project areas">
+        <ul class="btn-row jump">
+          {groups.map((g) => <li><a class="btn small" href={`#${g.id}`}>{g.title} <span class="count">{g.projects.length}</span></a></li>)}
+          <li><a class="btn small" href="#other-work">Other work <span class="count">{other.length}</span></a></li>
+        </ul>
+      </nav>
+    </header>
+
+    {groups.map((g) => (
+      <section class="group" id={g.id} aria-labelledby={`${g.id}-title`}>
+        <div class="group-head">
+          <h2 id={`${g.id}-title`}>{g.title}</h2>
+          <p>{g.blurb}</p>
+        </div>
+        <ul class="entries">
+          {g.projects.map((p) => (
+            <li class="entry" id={p.slug}>
+              <div class="visual"><Thumb p={p} /></div>
+              <div class="text">
+                <h3><a href={`/projects/${p.slug}/`}>{p.title}</a></h3>
+                <p class="repo"><BreakableName name={p.name} /></p>
+                <p class="summary">{p.summary}</p>
+                <ul class="tags" aria-label="Stack">{p.stack.map((t) => <li>{t}</li>)}</ul>
+                <dl class="numbers">
+                  {p.metrics.slice(0, 2).map((m) => (
+                    <div>
+                      <dt>{m.value}</dt>
+                      <dd>{m.label} <span class="source">Source: <span class="path">{m.source}</span></span></dd>
+                    </div>
+                  ))}
+                </dl>
+                {p.caveat && <p class="caveat">{p.caveat}</p>}
+                <ul class="btn-row">
+                  <li><a class="btn primary small" href={`/projects/${p.slug}/`}>Read the case study<span class="visually-hidden">: {p.title}</span></a></li>
+                  <li><a class="btn small" href={p.github}>Code on GitHub<span class="visually-hidden">: {p.title}</span></a></li>
+                </ul>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+
+    <section class="group" id="other-work" aria-labelledby="other-title">
+      <div class="group-head">
+        <h2 id="other-title">Other work</h2>
+        <p>Smaller repos without case studies. Each links to its README.</p>
+      </div>
+      <ul class="others">
+        {other.map((o) => (
+          <li>
+            <h3><a href={o.github}><BreakableName name={o.name} /></a></h3>
+            <p>{o.summary}</p>
+            {o.note && <p class="note">{o.note} <span class="source">Source: <span class="path">{o.source}</span></span></p>}
+            <ul class="tags" aria-label="Stack">{o.stack.map((t) => <li>{t}</li>)}</ul>
+          </li>
+        ))}
+      </ul>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .head { padding-block: 3rem 2rem; display: grid; gap: 1.25rem; }
+  .head .lede { margin: 0; }
+  .jump { margin-top: 0.5rem; }
+  .count {
+    display: inline-grid;
+    place-items: center;
+    min-width: 1.5em;
+    height: 1.5em;
+    font-size: 0.85em;
+    background: var(--amber);
+    color: var(--field-deep);
+  }
+  .jump a:hover .count { background: var(--field-deep); color: var(--amber); }
+
+  .group { padding-top: 3.5rem; scroll-margin-top: 70px; }
+  .group-head {
+    display: grid;
+    gap: 0.5rem;
+    padding-top: 1rem;
+    border-top: 2px solid var(--chalk);
+    margin-bottom: 2.5rem;
+  }
+  @media (min-width: 800px) {
+    .group-head { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: baseline; gap: 2rem; }
+  }
+  .group-head h2 { font-size: clamp(2.4rem, 1.6rem + 3vw, 3.6rem); }
+  .group-head p { margin: 0; color: var(--chalk-2); max-width: 48ch; }
+
+  .entries, .others { margin: 0; padding: 0; list-style: none; display: grid; gap: 4rem; }
+  .entry { display: grid; gap: 1.5rem; scroll-margin-top: 80px; }
+  .visual, .text { min-width: 0; }
+  @media (min-width: 900px) {
+    .entry { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 3rem; align-items: start; }
+    .visual { position: sticky; top: 90px; }
+  }
+  .text { display: grid; gap: 0.35rem; justify-items: start; }
+  .text h3 { font-size: clamp(2rem, 1.6rem + 1.2vw, 2.6rem); }
+  .text h3 a { text-decoration: none; }
+  .text h3 a:hover { text-decoration: underline; text-decoration-color: var(--amber); }
+  .summary { margin: 0.6rem 0 0.4rem; max-width: 56ch; }
+  .text .tags { margin-bottom: 0.6rem; }
+  .text .caveat { margin-bottom: 0.4rem; }
+  .text .btn-row { margin-top: 0.6rem; }
+
+  .numbers { margin: 0.4rem 0; display: grid; gap: 0.75rem; width: 100%; }
+  .numbers div { display: grid; grid-template-columns: minmax(7.5rem, auto) 1fr; gap: 1rem; align-items: baseline; border-top: 1px solid var(--rule); padding-top: 0.6rem; }
+  .numbers dt {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: var(--step-2);
+    line-height: 1;
+    color: var(--amber);
+  }
+  .numbers dd { margin: 0; font-size: var(--step--1); line-height: 1.5; }
+  .source { display: block; color: var(--chalk-2); margin-top: 0.15rem; }
+  @media (max-width: 480px) {
+    .numbers div { grid-template-columns: 1fr; gap: 0.3rem; }
+  }
+
+  .others { gap: 0; }
+  @media (min-width: 800px) { .others { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 3rem; } }
+  .others li { padding: 1.25rem 0 1.75rem; border-bottom: 1px solid var(--rule); min-width: 0; }
+  .others h3 { font-family: var(--mono); font-weight: 400; font-size: 1.05rem; line-height: 1.4; margin-bottom: 0.6rem; }
+  .others p { max-width: 60ch; }
+  .note { font-size: var(--step--1); line-height: 1.55; }
+</style>

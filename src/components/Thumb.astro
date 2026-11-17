@@ -1,0 +1,44 @@
+---
+// A project's visual, letterboxed into a fixed 16:10 frame so tiles line up whatever the source aspect.
+// Images keep their reduced-motion still; code projects show the first lines of their excerpt.
+import meta from '../data/media-meta.json';
+
+const { p, eager = false } = Astro.props as { p: any; eager?: boolean };
+const v = p.visual;
+const size = v.kind === 'image' ? (meta as Record<string, { width: number; height: number }>)[v.src] : null;
+if (v.kind === 'image' && !size) throw new Error(`No media-meta entry for ${v.src}: run npm run media`);
+const lines = v.kind === 'code' ? v.code.split('\n').slice(0, 9) : [];
+---
+<div class="thumb detect">
+  {v.kind === 'image' ? (
+    <picture>
+      {v.still && <source srcset={v.still} media="(prefers-reduced-motion: reduce)" />}
+      <img src={v.src} alt={v.alt} width={size!.width} height={size!.height} loading={eager ? 'eager' : 'lazy'} decoding="async" />
+    </picture>
+  ) : (
+    <pre aria-hidden="true"><code>{lines.join('\n')}</code></pre>
+  )}
+</div>
+
+<style>
+  .thumb {
+    aspect-ratio: 16 / 10;
+    background:
+      linear-gradient(rgba(238, 243, 247, 0.05) 1px, transparent 1px) 0 0 / 16px 16px,
+      linear-gradient(90deg, rgba(238, 243, 247, 0.05) 1px, transparent 1px) 0 0 / 16px 16px,
+      var(--field-deep);
+  }
+  picture, img { width: 100%; height: 100%; }
+  img { object-fit: contain; }
+  pre {
+    margin: 0;
+    height: 100%;
+    overflow: hidden;
+    padding: 1rem 1.1rem;
+    font-size: 0.68rem;
+    line-height: 1.7;
+    color: var(--chalk);
+    white-space: pre;
+    mask-image: linear-gradient(90deg, #000 85%, transparent);
+  }
+</style>

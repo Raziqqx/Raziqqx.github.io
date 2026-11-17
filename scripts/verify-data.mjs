@@ -62,6 +62,13 @@ for (const o of data.other) {
   if (o.note && o.source) checkMetric(o, { value: o.note, source: o.source }, 'note');
 }
 
+// Shape checks the pages rely on: every featured project belongs to a declared area.
+const areaIds = new Set((data.areas ?? []).map((a) => a.id));
+for (const p of data.featured) {
+  if (!areaIds.has(p.area)) fail(`${p.name}: area "${p.area}" is not one of the declared areas`);
+}
+if (data.person.education !== undefined && !Array.isArray(data.person.education)) fail('person.education must be a list');
+
 const page = JSON.stringify(data);
 if (/@[\w-]+\.\w+/.test(page.replace(/https?:\/\/\S+/g, ''))) fail('something that looks like an email address');
 

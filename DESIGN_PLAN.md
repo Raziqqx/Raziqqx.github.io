@@ -1,122 +1,60 @@
-# Design plan
+# Design plan (redesign, 2026-11-17)
 
-Subject: a systems engineer's project portfolio (fleet robotics, port logistics simulation, LiDAR,
-core banking, security agents, market-data C++). Audience: technical hiring managers in Singapore who
-skim. Job: in under a minute, show what each project is, what it proves, and where the code is.
+The grey-paper, one-long-page design was rejected. Brief from the user: distinctive fonts (no Inter, Roboto,
+Arial, system, Space Grotesk, IBM Plex, Archivo), one committed palette in CSS variables with dominant colour
+and sharp accents, one orchestrated page-load moment, atmospheric backgrounds tied to the subject, and a
+multi-page site with clear buttons. Subject: a student engineer whose work is robots, port logistics
+simulation, LiDAR, path planning, trading-system C++, banking ledgers and AI-security tooling.
 
-## Pass 1 (first draft)
+## Three concepts
 
-- Color: near-black background, one bright accent, white text.
-- Type: a serif display for the name, a sans for body, monospace for metric labels.
-- Layout: hero with name, big stat row ("8 projects / 5 languages"), then a 2-column grid of rounded
-  project cards with a screenshot on top, tags, and three big-number stat tiles.
+**A. Cyanotype planner (picked).** The page is a planner's map.
+- Palette: Prussian field `#123e66`, deep field `#0b2c4a`, chalk `#eef3f7`, chalk-2 `#b9cbdc`,
+  path amber `#ffb627`, goal orange `#ff6a3d` (markers only, never text).
+- Type: Big Shoulders Display (condensed, from Chicago street signage; port and yard signage feel) for
+  headings and numbers; Atkinson Hyperlegible for body; Martian Mono for repo names, code and sources.
+- Layout: a header with three destinations; home is a split hero (name left, grid map right), then four
+  highlighted projects in an uneven grid; projects index grouped by area with jump buttons.
+- Memorable element: the hero grid runs a real A* search when the site is built. On load the expanded
+  cells flood out in the order the search visited them, then the amber path draws and a robot drives it.
+  The 404 page runs the same search with the goal walled off: it floods and finds no path.
 
-## Critique of pass 1 against the skill's generic defaults
+**B. Container yard.** Corrugated container steel.
+- Palette: ISO blue `#1d4e89`, rust `#a63d2a`, dock yellow `#f2b705`, asphalt `#2b2d2f`, white `#f4f6f8`.
+- Type: Big Shoulders Stencil for headings, Overpass for body.
+- Layout: projects as containers stacked in yard bays, each with a BIC-style code.
+- Memorable element: ribbed container doors (repeating gradients) that swing open into a case study.
+- Rejected: it ties every project to the port simulator; the ledger and the security work look dressed up.
 
-| Draft choice | Matches default | Revision |
-|---|---|---|
-| Near-black + one bright accent | #2 (black + acid accent) | Cool concrete-grey paper and deep harbour-navy ink; the accent is used as a fill, not as text colour. |
-| Serif display + sans + mono labels | #1 and #5 (mono for small data labels) | One family, Archivo, using its width axis as the type treatment: expanded for names, normal for body. Monospace only for real code excerpts. |
-| "8 projects / 5 languages" stat row | the big-number hero the skill warns about | Dropped. Those numbers say nothing about quality. |
-| Identical rounded cards in a grid | #4 (SaaS-card kit) | Each project is a full-width sheet separated by a rule, text left, evidence right. No shadows, one small radius on media frames only. |
-| Big-number stat tiles per card | default stat treatment | A small "readings" table: value with unit, what was measured, and the file it came from. The source path is the point: it makes every number checkable. |
+**C. Gruvbox editor.** A warm IDE theme.
+- Palette: `#282828`, `#ebdbb2`, `#fe8019`, `#b8bb26`, `#83a598`.
+- Type: Recursive, animating its MONO axis from sans to mono on load.
+- Layout: a file-tree nav, projects as open tabs, line-number gutter.
+- Rejected: the "terminal portfolio" is a common student trope, and long case studies read worse dressed as
+  source files.
 
-## Final tokens
+## Why A
+Path planning, LiDAR and the port twin all show a world as a grid or a map with a route through it. That is the
+shared picture across his strongest work, so the site uses it. The search is computed rather than drawn: the
+number of expanded cells under the hero comes from running the code at build time, which fits a site whose rule is
+"every number comes from running something".
 
-### Color
+## Check against the generic defaults
+- Not the near-black + one acid accent: the field is a saturated mid blue, with two warm accents that have
+  separate jobs (amber = route and primary action, orange = goal/robot marker and caveat flag).
+- Not cream + serif, not broadsheet hairlines, not the SaaS card kit: tiles have no shadows; images get a
+  LiDAR-style detection box (amber corner brackets) instead of a rounded card.
+- No all-caps eyebrows, no middle-dot meta strings, no arrows appended to buttons, no 01/02/03 numbering
+  (projects are not a sequence). Mono is used for identifiers (repo names, file paths, code), where it carries
+  meaning, not as a label style.
+- Motion: one load sequence on the hero (and on the 404). The old per-section scroll reveals and the reading bar
+  are removed: they don't belong to the planner idea.
 
-| token | light | dark | role |
-|---|---|---|---|
-| paper | #E8ECEA | #0F1B22 | page background (concrete grey / harbour night) |
-| ink | #13212B | #E2E8E6 | text |
-| ink-2 | #4F5D66 | #9FB0B8 | secondary text, captions |
-| rule | #BFC8C6 | #2A3A44 | dividers, table lines, media frames |
-| signal | #F2C200 | #F2C200 | hazard yellow, as a fill: reading bars, focus ring, the skip link, current page |
-| link | #1B56A0 | #8EB9F2 | links |
-
-Contrast (WCAG, computed with a script): ink/paper 13.8:1, ink-2/paper 5.7:1, link/paper 6.1:1,
-ink on signal 9.8:1. Dark: ink 14.1:1, ink-2 7.8:1, link 8.6:1. Signal on light paper is only 1.4:1,
-so yellow is never used alone as a line on the light theme: the focus ring is a two-tone ring
-(3px ink outline with a yellow halo), and yellow fills always carry ink text.
-
-### Type (reworked 2026-11-17 after user feedback)
-
-The first build used Archivo at its expanded width (wdth 125, weight 800) for names and titles. The user
-found it read as "weird and AI generated": stretched heavy wide headings are a template tell, and project
-repo names in that face wrapped mid-word. Replaced with:
-
-- **IBM Plex Sans** for all text, weights 400 / 500 / 600 only, normal width. An engineering face (IBM's,
-  drawn for technical documentation) that suits the subject without performing it. Self-hosted through
-  Fontsource, latin subset, `font-display: swap`.
-- **IBM Plex Mono** (400) only for code excerpts, file paths and repo names, which are identifiers.
-- One scale, ratio 1.25 from a 17px body: 13.6 (`--step--1`: captions, tags, labels, source lines) /
-  17 (body, line-height 1.6, measure ≤ 68ch) / 21.25 (`--step-1`: h3, other-work names, reading values,
-  summaries on case studies) / 26.6 (`--step-2`: project titles on phones, case-study section heads on
-  desktop) / 33.2 (`--step-3`: project titles on desktop) / 41.5 (case-study h1 on desktop).
-- Hero name: 600, tracking −0.022em, `clamp(2.25rem, 1.75rem + 2.2vw, 3.5rem)` (36px at 360, 56px at 1440),
-  capped at 12em so "Muhammad Raziq / Bin Mohd Rafig" sets on two lines at both widths.
-- Projects show a human title (`title` in projects.json) with the repo name as a small mono line under it,
-  so nothing breaks mid-word. Headings use `text-wrap: balance`.
-- Reading values: 600 at `--step-1` (`--step-0` under 420px), tabular figures.
-- Sentence case everywhere. No all-caps labels, no eyebrows.
-
-### Layout
-
-Left-aligned throughout, one 12-column grid, max width 1240px, 16px gutter on phones.
-
-```
-HOME, ≥ 1000px
-+---------------------------------------------------------------+
-| Muhd Raziq                                     GitHub LinkedIn |
-|                                                                |
-| MUHD RAZIQ (expanded, huge)          +-----------------------+ |
-| Systems software, measured.           | replay.svg: 20 robots | |
-| 2-line plain intro                    | (real CBS plan)       | |
-|                                       +-----------------------+ |
-|---------------------------------------------------------------|
-| terminal-digital-twin                 +-----------------------+ |
-| one-line summary                      |   screenshot          | |
-| C++20  OpenGL  ...                    |                       | |
-| readings table (value | what | src)   +-----------------------+ |
-| Read the case study / Code / See it working     caption        |
-|---------------------------------------------------------------|
-| ... 9 more sheets ...                                          |
-|---------------------------------------------------------------|
-| Other work: compact rows (name, one line, link)                |
-| Footer: GitHub, LinkedIn, how numbers are sourced              |
-+---------------------------------------------------------------+
-
-HOME, 360px: single column; the visual follows the summary, readings follow the visual.
-
-DETAIL PAGE
-+---------------------------------------------------------------+
-| back to all projects                                          |
-| PROJECT NAME (expanded)                                       |
-| summary; stack; links; data caveat if synthetic/mock          |
-| media (full width of the text column + 2 cols)                |
-| The problem / How it works / Key decision / Results (table)   |
-+---------------------------------------------------------------+
-```
-
-### Principles
-
-1. Evidence over adjectives: every number shows its unit and its source file; caveats (synthetic
-   data, mock LLM) sit next to the numbers they qualify, not in a footnote.
-2. One loud thing: the hazard-yellow signal (caveats, focus, reading-progress bar). Type is quiet and
-   technical: Plex Sans at one scale, rules, grey paper, no shadows.
-3. The hero shows a real output (the MAPF replay), not a decoration. It animates once per load cycle
-   as SMIL; with reduced motion a static first frame is served instead.
-5. Scroll reveals (added at the user's request): each sheet's text column rises in, then its media
-   (slight scale), then its reading rows in sequence; a 3px yellow progress bar tracks the page. Opacity and
-   transform only, 600ms ease-out, once per element; off under reduced motion and without JS.
-4. Hazard yellow marks state and attention only: focus, the current page, the reading bar.
-
-## Changes made while building
-
-- **Hero: a project index instead of the MAPF replay.** The replay would have appeared twice (hero and the
-  mapf card). The site's job is "what is each project, in under a minute", so the hero's right column is a
-  table of contents (name and domain, linking to each sheet). Ambient motion is now only the MAPF replay and
-  the ROS 2 GIF inside their own sheets, and both swap to stills under reduced motion.
-- **Hazard yellow marks caveats.** A pale yellow block with a solid yellow edge holds each "synthetic data /
-  mock model" note: caution is what the colour means on a quay. Values in readings are not highlighted.
-- **Domain sits in its own narrow column** on wide screens (a title-block cell), and above the name on phones.
+## Tokens
+- Background: the field with a 24 px chalk grid at 6 % alpha, a lighter cobalt glow top-left and a deeper wash at
+  the bottom (layered gradients), so the page reads as a lit chart table rather than a flat fill.
+- Scale: 1.25 ratio from an 18 px Atkinson body; headings in Big Shoulders 800 sized by clamp(); numbers in Big
+  Shoulders 700 amber.
+- Alignment: left aligned throughout; measure under 70 ch.
+- One theme only (dark-on-blue). Contrast: chalk on field 9.9:1, chalk-2 on field 6.6:1, amber on field 6.3:1,
+  field-deep on amber 8.1:1; orange on field 3.9:1, so orange is never text (computed by script; see DECISIONS.md).

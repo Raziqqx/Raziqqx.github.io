@@ -1,20 +1,26 @@
 ---
 // Latin subsets only; Fontsource ships font-display: swap.
-import '@fontsource/ibm-plex-sans/latin-400.css';
-import '@fontsource/ibm-plex-sans/latin-500.css';
-import '@fontsource/ibm-plex-sans/latin-600.css';
-import '@fontsource/ibm-plex-mono/latin-400.css';
+import '@fontsource/big-shoulders-display/latin-700';
+import '@fontsource/big-shoulders-display/latin-800';
+import '@fontsource/atkinson-hyperlegible/latin-400';
+import '@fontsource/atkinson-hyperlegible/latin-700';
+import '@fontsource/martian-mono/latin-400';
 import '../styles/global.css';
 import data from '../data/projects.json';
 
 interface Props {
   title: string;
   description: string;
-  /** Detail pages show a small header with a way home; the home page has its own hero. */
-  showHeader?: boolean;
+  /** Which nav item to mark as the current page. */
+  section?: 'home' | 'projects' | 'about';
 }
-const { title, description, showHeader = false } = Astro.props;
+const { title, description, section } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
+const nav = [
+  { href: '/projects/', label: 'Projects', id: 'projects' },
+  { href: '/about/', label: 'About', id: 'about' },
+];
+const github = data.person.links.find((l) => l.label === 'GitHub')!;
 ---
 <!doctype html>
 <html lang="en">
@@ -25,92 +31,114 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <meta name="theme-color" content="#e8ecea" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#0f1b22" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#0b2c4a" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonical} />
-    <!-- Opt in to scroll reveals before first paint; without JS (or IntersectionObserver) nothing is hidden. -->
-    <script is:inline>if ('IntersectionObserver' in window) document.documentElement.classList.add('js');</script>
   </head>
   <body>
-    <div class="progress" aria-hidden="true"></div>
     <a class="skip" href="#main">Skip to content</a>
-    {showHeader && (
-      <header class="site-header wrap">
-        <a class="home" href="/">{data.person.name}</a>
-        <ul class="links">
-          {data.person.links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
-        </ul>
-      </header>
-    )}
+    <header class="site-header">
+      <div class="wrap bar">
+        <a class="home" href="/" aria-current={section === 'home' ? 'page' : undefined}>
+          <span class="mark" aria-hidden="true"></span>Muhammad Raziq
+        </a>
+        <nav aria-label="Main">
+          <ul>
+            {nav.map((n) => (
+              <li><a href={n.href} aria-current={section === n.id ? 'page' : undefined}>{n.label}</a></li>
+            ))}
+            <li><a href={github.href}>GitHub</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
     <main id="main">
       <slot />
     </main>
-    <footer class="site-footer wrap">
-      <p>
-        Every number on this site is copied from the linked repository's results folder or README, and the
-        file it came from is named under it. Projects marked with a note ran on synthetic data, a simulator or a
-        mock model.
-      </p>
-      <ul class="links">
-        {data.person.links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
-        <li><a href="https://github.com/Raziqqx/Raziqqx.github.io">Site source</a></li>
-      </ul>
+    <footer class="site-footer">
+      <div class="wrap foot">
+        <p>
+          Every number on this site is copied from the linked repository's results folder or README, and the
+          file it came from is named under it. Projects marked with an orange flag ran on synthetic data, a
+          simulator or a mock model.
+        </p>
+        <ul class="foot-links">
+          {data.person.links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+          <li><a href="https://github.com/Raziqqx/Raziqqx.github.io">Site source</a></li>
+        </ul>
+      </div>
     </footer>
-    <script is:inline>
-      // Reveal each [data-reveal] element once as it enters the viewport, and drive the reading bar.
-      (function () {
-        if (!document.documentElement.classList.contains('js')) return;
-        var io = new IntersectionObserver(function (entries) {
-          entries.forEach(function (e) {
-            if (!e.isIntersecting) return;
-            e.target.classList.add('is-in');
-            io.unobserve(e.target);
-          });
-        }, { rootMargin: '0px 0px -8% 0px' });
-        document.querySelectorAll('[data-reveal]').forEach(function (el) { io.observe(el); });
-
-        var bar = document.querySelector('.progress');
-        var queued = false;
-        function draw() {
-          queued = false;
-          var max = document.documentElement.scrollHeight - window.innerHeight;
-          bar.style.transform = 'scaleX(' + (max > 0 ? Math.min(1, window.scrollY / max) : 0) + ')';
-        }
-        function onScroll() { if (!queued) { queued = true; requestAnimationFrame(draw); } }
-        window.addEventListener('scroll', onScroll, { passive: true });
-        window.addEventListener('resize', onScroll);
-        draw();
-      })();
-    </script>
   </body>
 </html>
 
 <style>
   .site-header {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 0.5rem 1.5rem;
-    padding-block: 1.25rem;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(11, 44, 74, 0.92);
     border-bottom: 1px solid var(--rule);
   }
-  .home {
-    color: var(--ink);
-    font-weight: 600;
-    letter-spacing: -0.01em;
-    text-decoration: none;
-    font-size: var(--step-0);
+  @supports (backdrop-filter: blur(6px)) {
+    .site-header { background: rgba(11, 44, 74, 0.8); backdrop-filter: blur(6px); }
   }
+  .bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.25rem 1.5rem;
+    min-height: 60px;
+  }
+  .home {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 1.5rem;
+    letter-spacing: 0.01em;
+    text-decoration: none;
+    color: var(--chalk);
+  }
+  /* The robot from the hero grid, as a wordmark. */
+  .mark {
+    width: 14px;
+    height: 14px;
+    background: var(--goal);
+    box-shadow: 0 0 0 3px var(--field-deep), 0 0 0 5px var(--amber);
+  }
+  nav ul { display: flex; gap: 0.25rem; margin: 0; padding: 0; list-style: none; }
+  nav a {
+    display: inline-block;
+    padding: 0.55rem 0.7rem;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 1.25rem;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    color: var(--chalk);
+    border-bottom: 3px solid transparent;
+  }
+  nav a:hover { color: var(--amber); }
+  nav a[aria-current='page'] { border-bottom-color: var(--amber); }
+  nav li:last-child a { padding-right: 0; }
+
   .site-footer {
-    margin-top: 5rem;
-    padding-block: 2rem 3rem;
+    margin-top: 6rem;
+    background: var(--field-deep);
     border-top: 1px solid var(--rule);
-    color: var(--ink-2);
+    color: var(--chalk-2);
     font-size: var(--step--1);
   }
-  .site-footer p { max-width: var(--measure); margin: 0 0 1rem; }
+  .foot { padding-block: 2rem 2.5rem; display: grid; gap: 1rem; }
+  .foot p { max-width: var(--measure); margin: 0; }
+  .foot-links { display: flex; flex-wrap: wrap; gap: 0.25rem 1.25rem; margin: 0; padding: 0; list-style: none; }
+  .foot-links a { display: inline-block; padding-block: 0.4rem; }
+  @media (max-width: 420px) {
+    .home { font-size: 1.3rem; }
+    nav a { font-size: 1.1rem; padding-inline: 0.5rem; }
+  }
 </style>

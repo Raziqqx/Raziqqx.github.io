@@ -11,14 +11,34 @@
         "label": "LinkedIn",
         "href": "https://www.linkedin.com/in/muhammadraziqbmr/"
       }
-    ]
+    ],
+    "tagline": "Student engineer. I write C++, Java and Python for robot fleets, port logistics simulation, LiDAR perception, banking ledgers and AI-security tools.",
+    "education": []
   },
+  "areas": [
+    {
+      "id": "robotics",
+      "title": "Robots and autonomy",
+      "blurb": "Planning, navigation and perception for robots and robot fleets."
+    },
+    {
+      "id": "systems",
+      "title": "Logistics and finance systems",
+      "blurb": "Simulation and transaction software where results have to be exact and repeatable."
+    },
+    {
+      "id": "ai-security",
+      "title": "AI and security",
+      "blurb": "Retrieval, threat hunting and red-team testing for language-model agents."
+    }
+  ],
   "featured": [
     {
       "slug": "terminal-digital-twin",
       "name": "terminal-digital-twin",
       "title": "Container terminal digital twin",
       "domain": "Port logistics",
+      "area": "systems",
       "summary": "Simulates an automated container terminal and compares ways of dispatching its robot trucks, with a live 3D view.",
       "stack": [
         "C++20",
@@ -107,13 +127,15 @@
             "caption": "Moves per berth-hour by policy and fleet size. results/m2_policy_comparison.png"
           }
         ]
-      }
+      },
+      "highlight": true
     },
     {
       "slug": "mapf-fleet-planner",
       "name": "mapf-fleet-planner",
       "title": "Multi-robot fleet planner",
       "domain": "Robot fleets",
+      "area": "robotics",
       "summary": "Plans collision-free routes for up to 100 robots sharing a grid, and checks every plan with a separate validator.",
       "stack": [
         "C++20",
@@ -197,13 +219,15 @@
             "caption": "Success rate vs agent count per map. results/bench_success.png"
           }
         ]
-      }
+      },
+      "highlight": true
     },
     {
       "slug": "ros2-autonomy-stack",
       "name": "ros2-autonomy-stack",
       "title": "ROS 2 autonomy stack",
       "domain": "Robotics",
+      "area": "robotics",
       "summary": "Lets a simulated warehouse robot localise, map, plan, drive to goals and recover when its path is blocked.",
       "stack": [
         "ROS 2 Jazzy",
@@ -282,13 +306,15 @@
           }
         ],
         "media": []
-      }
+      },
+      "highlight": true
     },
     {
       "slug": "lidar-perception-pipeline",
       "name": "lidar-perception-pipeline",
       "title": "LiDAR perception pipeline",
       "domain": "Perception",
+      "area": "robotics",
       "summary": "Finds and tracks cars and pedestrians in 3D LiDAR scans, frame by frame, and measures every stage.",
       "stack": [
         "C++20",
@@ -365,13 +391,15 @@
           }
         ],
         "media": []
-      }
+      },
+      "highlight": true
     },
     {
       "slug": "core-banking-ledger",
       "name": "core-banking-ledger",
       "title": "Core banking ledger",
       "domain": "Banking",
+      "area": "systems",
       "summary": "A banking backend that keeps every account balanced through concurrent payments, client retries and crashes mid-transfer.",
       "stack": [
         "Java 21",
@@ -458,13 +486,15 @@
             "caption": "The OpenAPI documentation. docs/swagger-ui.png"
           }
         ]
-      }
+      },
+      "highlight": false
     },
     {
       "slug": "research-rag-platform",
       "name": "research-rag-platform",
       "title": "Research paper Q&A",
       "domain": "Search and retrieval",
+      "area": "ai-security",
       "summary": "Answers questions about economics and finance papers with page-level citations, and says when the papers don't hold the answer.",
       "stack": [
         "Python",
@@ -543,13 +573,15 @@
           }
         ],
         "media": []
-      }
+      },
+      "highlight": false
     },
     {
       "slug": "agentic-threat-hunter",
       "name": "agentic-threat-hunter",
       "title": "Agentic threat hunter",
       "domain": "Security",
+      "area": "ai-security",
       "summary": "An agent that hunts for attacker activity in security logs through read-only tools and writes Sigma detection rules for what it finds.",
       "stack": [
         "Python",
@@ -628,13 +660,15 @@
           }
         ],
         "media": []
-      }
+      },
+      "highlight": false
     },
     {
       "slug": "agent-redteam-eval",
       "name": "agent-redteam-eval",
       "title": "Red-team evals for AI agents",
       "domain": "AI safety",
+      "area": "ai-security",
       "summary": "Attacks tool-using AI agents with prompt injection and measures what each defence actually stops.",
       "stack": [
         "Python",
@@ -711,7 +745,8 @@
           }
         ],
         "media": []
-      }
+      },
+      "highlight": false
     }
   ],
   "other": [

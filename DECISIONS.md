@@ -25,10 +25,8 @@
    anything that looks like an email address.
 
 ## Design
-See DESIGN_PLAN.md for tokens and the critique of the first draft. In short: cool concrete-grey paper,
-harbour-navy ink, hazard yellow used only as a fill; one type family (Archivo) with its width axis as the
-headline treatment; full-width project sheets instead of a card grid; a readings table with sources instead
-of stat tiles.
+Superseded by the redesign below (2026-11-17). The first design was cool grey paper, navy ink and Archivo,
+later IBM Plex, on one long page.
 
 ## Tech
 9. **Astro 4.16.19** (last 4.x; supports Node 18.17+), no integrations, plain CSS in one global file plus
@@ -74,3 +72,33 @@ of stat tiles.
 22. **Screenshots renamed**: `-top` is the viewport at scrollY 0 (the old `-fold` shots were mislabeled),
     `-mid` is the ROS 2 sheet after its reveals, `-full` is the whole page after scrolling through it.
     Captured against `python3 -m http.server -d dist`.
+
+## Redesign: "Cyanotype planner" (2026-11-17, user rejected the grey-paper design)
+23. **Concept A of three** (DESIGN_PLAN.md): a Prussian-blue planner map. Big Shoulders Display (headings,
+    numbers), Atkinson Hyperlegible (body), Martian Mono (repo names, paths, code), all self-hosted via
+    Fontsource 5.3.0. Fontsource 5 maps `pkg/latin-700` to the CSS file, so imports omit `.css`.
+24. **One theme, no light mode.** The user's brief allows it when the concept commits to one; the blue field is
+    the concept. This overrides the "light and dark themes" line in CLAUDE.md for this design. Contrast was
+    computed by script: chalk 9.9:1, chalk-2 6.6:1 and amber 6.3:1 on the field; orange (3.9:1) is used only
+    for markers, never text.
+25. **The hero runs a real A\* search at build time** (`src/components/PlannerGrid.astro`) and animates the
+    expanded cells in search order, then the route and a robot. The caption's counts (cells expanded, path
+    steps) come from that run, so they follow the site's rule that every number is produced by code. The 404
+    page walls off the goal and shows the search failing.
+26. **Motion is one CSS load sequence** (`.rise` with `--i` stagger, the planner animation). The
+    IntersectionObserver scroll reveals and reading bar were removed: they did not fit the concept. No
+    JavaScript ships at all; reduced motion shows the finished state (0 running animations, checked).
+27. **Multi-page IA**: `/`, `/projects/` (grouped by a new `area` field with jump buttons, then other work),
+    `/projects/<slug>/` (sticky headline numbers, full results, prev/next wrapping around, back button),
+    `/about/`, 404. Home highlights the four entries with `highlight: true`.
+28. **Areas**: Robots and autonomy (MAPF, ROS 2, LiDAR), Logistics and finance systems (terminal twin, ledger),
+    AI and security (RAG, threat hunter, red-team). Declared in `areas`; verify-data checks each project's area.
+29. **About uses only repo facts**: the tagline, the areas, language counts computed from stack tags, and how
+    the work is checked (tests, reproducible numbers, stated limits, DESIGN.md per repo). `person.education`
+    exists and is empty; the Education block renders only when it has entries.
+30. **Detection-box frames**: images and code get amber corner brackets (CSS mask on one pseudo-element), like
+    the LiDAR viewer's boxes, instead of rounded cards with shadows. Thumbnails letterbox to 16:10.
+31. **Checks**: `npm run build`, `npm run verify:data` pass; `npm run screenshots` reports 0 px horizontal
+    overflow on all five pages at 360 and 1440; Lighthouse 11.7.1 desktop: accessibility 100 on home, projects,
+    about and one case study (results/lighthouse.md). verify-data needs the GitHub-only repos cloned to
+    /tmp/claude-1000/portfolio-src (re-cloned for this run).

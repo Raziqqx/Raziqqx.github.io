@@ -1,0 +1,24 @@
+---
+import Base from '../layouts/Base.astro';
+import PlannerGrid from '../components/PlannerGrid.astro';
+---
+<Base title="Page not found" description="This page does not exist.">
+  <section class="wrap lost">
+    <div>
+      <h1 class="page-title rise" style="--i:0">No path to this page</h1>
+      <p class="lede rise" style="--i:1">The address doesn't match any page on this site. The projects list has everything that's here.</p>
+      <ul class="btn-row rise" style="--i:2">
+        <li><a class="btn primary" href="/projects/">View projects</a></li>
+        <li><a class="btn" href="/">Go to the home page</a></li>
+      </ul>
+    </div>
+    <PlannerGrid blocked />
+  </section>
+</Base>
+
+<style>
+  .lost { display: grid; gap: 3rem; padding-block: 4rem; align-items: center; }
+  .lost > * { min-width: 0; }
+  .lede { margin-block: 1.5rem 2rem; }
+  @media (min-width: 960px) { .lost { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+</style>

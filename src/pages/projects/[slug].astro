@@ -8,99 +8,145 @@ import BreakableName from '../../components/BreakableName.astro';
 import data from '../../data/projects.json';
 
 export function getStaticPaths() {
-  return data.featured.filter((p) => 'detail' in p && p.detail).map((p) => ({ params: { slug: p.slug }, props: { p } }));
+  const list = data.featured.filter((p) => 'detail' in p && p.detail);
+  // Previous / next wrap around, so every page has both.
+  return list.map((p, i) => ({
+    params: { slug: p.slug },
+    props: { p, prev: list[(i - 1 + list.length) % list.length], next: list[(i + 1) % list.length] },
+  }));
 }
 
-const { p } = Astro.props as { p: any };
+const { p, prev, next } = Astro.props as { p: any; prev: any; next: any };
 const d = p.detail;
+const area = data.areas.find((a) => a.id === p.area)!;
 ---
-<Base title={`${p.title} (${p.name}), a ${p.domain.toLowerCase()} project by ${data.person.name}`} description={p.summary} showHeader>
+<Base title={`${p.title} (${p.name}), a ${p.domain.toLowerCase()} project by ${data.person.name}`} description={p.summary} section="projects">
   <article class="wrap case">
-    <p class="back"><a href={`/#${p.slug}`}>All projects</a></p>
+    <nav class="crumbs rise" style="--i:0" aria-label="Breadcrumb">
+      <a class="btn small" href="/projects/">All projects</a>
+      <a class="area" href={`/projects/#${area.id}`}>{area.title}</a>
+    </nav>
 
     <header class="head">
-      <p class="domain">{p.domain}</p>
-      <h1>{p.title}</h1>
-      <p class="repo"><BreakableName name={p.name} /></p>
-      <p class="summary">{p.summary}</p>
-      <ul class="tags" aria-label="Stack">{p.stack.map((t: string) => <li>{t}</li>)}</ul>
-      <ul class="links">
-        <li><a href={p.github}>Code on GitHub</a></li>
-        <li><a href={p.run.href}>{p.run.label}</a></li>
+      <h1 class="page-title rise" style="--i:1">{p.title}</h1>
+      <p class="repo rise" style="--i:2"><BreakableName name={p.name} /></p>
+      <p class="lede rise" style="--i:3">{p.summary}</p>
+      <ul class="tags rise" style="--i:4" aria-label="Stack">{p.stack.map((t: string) => <li>{t}</li>)}</ul>
+      <ul class="btn-row rise" style="--i:5">
+        <li><a class="btn primary" href={p.github}>Code on GitHub</a></li>
+        <li><a class="btn" href={p.run.href}>{p.run.label}</a></li>
       </ul>
-      {p.caveat && <p class="caveat">{p.caveat}</p>}
+      {p.caveat && <p class="caveat rise" style="--i:6">{p.caveat}</p>}
     </header>
 
-    <div class="lead-media">
+    <div class="lead-media rise" style="--i:6">
       {p.visual.kind === 'image'
         ? <Media src={p.visual.src} still={p.visual.still} alt={p.visual.alt} caption={p.visual.caption} eager />
         : <CodeExcerpt code={p.visual.code} path={p.visual.path} lines={p.visual.lines} lang={p.visual.lang} caption={p.visual.caption} github={p.github} />}
     </div>
 
     <div class="body">
-      <section data-reveal aria-labelledby="problem">
-        <h2 id="problem">The problem</h2>
-        <p>{d.problem}</p>
-      </section>
-
-      <section data-reveal aria-labelledby="approach">
-        <h2 id="approach">How it works</h2>
-        <ul class="steps">{d.approach.map((a: string) => <li>{a}</li>)}</ul>
-      </section>
-
-      <section data-reveal aria-labelledby="decision">
-        <h2 id="decision">Key decision: {d.decision.title.charAt(0).toLowerCase() + d.decision.title.slice(1)}</h2>
-        <p>{d.decision.body}</p>
-      </section>
-
-      <section data-reveal aria-labelledby="results">
-        <h2 id="results">Results</h2>
-        <Readings items={d.results} caption={`Results for ${p.title}`} reveal />
-      </section>
-
-      {d.media.length > 0 && (
-        <section class="wide" data-reveal aria-labelledby="more">
-          <h2 id="more">More from the repo</h2>
-          <div class="gallery">
-            {d.media.map((m: any) => <Media src={m.src} alt={m.alt} caption={m.caption} />)}
-          </div>
+      <div class="story">
+        <section aria-labelledby="problem">
+          <h2 id="problem">The problem</h2>
+          <p>{d.problem}</p>
         </section>
-      )}
 
-      <p class="more-docs">
-        The full design write-up, with alternatives considered and known limitations, is in
-        <a href={`${p.github}/blob/HEAD/docs/DESIGN.md`}>docs/DESIGN.md</a> in the repository.
-      </p>
+        <section aria-labelledby="approach">
+          <h2 id="approach">How it works</h2>
+          <ul class="steps">{d.approach.map((a: string) => <li>{a}</li>)}</ul>
+        </section>
+
+        <section class="decision" aria-labelledby="decision">
+          <h2 id="decision">Key decision: {d.decision.title.charAt(0).toLowerCase() + d.decision.title.slice(1)}</h2>
+          <p>{d.decision.body}</p>
+        </section>
+      </div>
+
+      <aside class="headline" aria-labelledby="headline-title">
+        <h2 id="headline-title">Headline numbers</h2>
+        <Readings items={p.metrics} caption={`Headline results for ${p.title}`} />
+      </aside>
     </div>
+
+    <section class="results" aria-labelledby="results">
+      <h2 id="results">All results</h2>
+      <Readings items={d.results} caption={`Results for ${p.title}`} />
+    </section>
+
+    {d.media.length > 0 && (
+      <section class="more" aria-labelledby="more">
+        <h2 id="more">More from the repo</h2>
+        <div class="gallery">
+          {d.media.map((m: any) => <Media src={m.src} alt={m.alt} caption={m.caption} />)}
+        </div>
+      </section>
+    )}
+
+    <p class="more-docs">
+      The full design write-up, with alternatives considered and known limitations, is in
+      <a href={`${p.github}/blob/HEAD/docs/DESIGN.md`}>docs/DESIGN.md</a> in the repository.
+    </p>
+
+    <nav class="pager" aria-label="More projects">
+      <a class="prev" href={`/projects/${prev.slug}/`}>
+        <span class="dir">Previous project</span>
+        <span class="t">{prev.title}</span>
+      </a>
+      <a class="next" href={`/projects/${next.slug}/`}>
+        <span class="dir">Next project</span>
+        <span class="t">{next.title}</span>
+      </a>
+    </nav>
+    <p class="back"><a class="btn" href="/projects/">Back to all projects</a></p>
   </article>
 </Base>
 
 <style>
-  .case { padding-top: 1.5rem; }
-  .back { margin: 0 0 2.5rem; font-weight: 500; }
-  .head { max-width: 52rem; display: grid; gap: 0; }
-  .domain { margin: 0 0 0.4rem; color: var(--ink-2); font-weight: 500; font-size: var(--step--1); }
-  /* The page's h1 is the top of the scale (step-3 on desktop, plus one step); never wider than the head column. */
-  h1 { margin: 0 0 0.35rem; font-size: clamp(var(--step-2), 1.2rem + 2vw, 2.6rem); line-height: 1.12; letter-spacing: -0.02em; }
-  .repo { margin-bottom: 1.25rem; }
-  .summary { margin: 0 0 1rem; font-size: var(--step-1); line-height: 1.5; max-width: 44ch; }
-  .head .tags { margin-bottom: 1rem; }
-  .head .links { margin-bottom: 1.25rem; }
-  .lead-media { margin-block: 2.5rem 3.5rem; max-width: 64rem; }
-  .body > * { max-width: 46rem; }
-  .body > .wide { max-width: 64rem; }
-  .body section { margin-bottom: 3rem; }
-  h2 {
-    margin: 0 0 0.9rem;
-    font-size: clamp(var(--step-1), 1.1rem + 0.6vw, var(--step-2));
-    line-height: 1.25;
-    padding-top: 0.9rem;
-    border-top: 2px solid var(--ink);
+  .case { padding-top: 2rem; }
+  .crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.25rem; margin-bottom: 2.5rem; }
+  .area { font-weight: 700; }
+  .head { display: grid; gap: 1rem; justify-items: start; max-width: 60rem; }
+  .head .repo { margin-top: -0.25rem; }
+  .head .lede, .head .tags, .head .btn-row, .head .caveat { margin: 0; }
+  .lead-media { margin-block: 3rem 4rem; max-width: 68rem; }
+
+  h2 { font-size: clamp(2rem, 1.5rem + 1.6vw, 2.75rem); margin-bottom: 1rem; }
+  .body { display: grid; gap: 3rem; }
+  .story, .headline { min-width: 0; }
+  @media (min-width: 1000px) {
+    .body { grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); gap: 4rem; align-items: start; }
+    .headline { position: sticky; top: 90px; }
   }
-  .body p { max-width: var(--measure); margin: 0 0 1rem; }
+  .story section { margin-bottom: 3rem; }
+  .story p { max-width: var(--measure); }
   .steps { margin: 0; padding-left: 1.2rem; }
-  .steps li { margin-bottom: 0.7rem; max-width: 66ch; }
-  .steps li::marker { color: var(--ink-2); }
-  .gallery { display: grid; gap: 2rem; }
-  .more-docs { color: var(--ink-2); }
+  .steps li { margin-bottom: 0.8rem; max-width: 64ch; }
+  .steps li::marker { color: var(--amber); }
+  /* The decision is the part an engineer reads first: set it off on the deep panel. */
+  .decision { padding: 1.5rem 1.5rem 0.75rem; background: var(--field-deep); border-left: 6px solid var(--amber); }
+  .headline { padding: 1.25rem 1.25rem 1.5rem; background: var(--field-deep); border: 1px solid var(--rule); }
+  .headline h2 { font-size: 1.9rem; }
+
+  .results { margin-top: 2rem; max-width: 52rem; }
+  .more { margin-top: 4rem; max-width: 68rem; }
+  .gallery { display: grid; gap: 3rem; }
+  .more-docs { margin-top: 3rem; color: var(--chalk-2); max-width: var(--measure); }
+
+  .pager { display: grid; gap: 1rem; margin-top: 4rem; }
+  @media (min-width: 700px) { .pager { grid-template-columns: 1fr 1fr; } }
+  .pager a {
+    display: grid;
+    gap: 0.3rem;
+    padding: 1.25rem 1.4rem;
+    text-decoration: none;
+    border: 2px solid var(--chalk);
+    background: var(--field-deep);
+  }
+  .pager a:hover { border-color: var(--amber); color: var(--chalk); }
+  .pager .next { text-align: right; }
+  .dir { color: var(--chalk-2); font-size: var(--step--1); }
+  .t { font-family: var(--display); font-weight: 800; font-size: 1.9rem; line-height: 1.05; }
+  .pager a:hover .t { color: var(--amber); }
+  .back { margin-top: 1.5rem; }
 </style>

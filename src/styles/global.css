@@ -1,93 +1,91 @@
-/* Tokens: see DESIGN_PLAN.md. Light is the default; dark follows the system setting. */
+/* Tokens: see DESIGN_PLAN.md ("Cyanotype planner"). One theme: chalk on a Prussian-blue field. */
 :root {
-  color-scheme: light dark;
-  --paper: #e8ecea;
-  --paper-2: #dde3e1; /* code panels */
-  --ink: #13212b;
-  --ink-2: #4f5d66;
-  --rule: #bfc8c6;
-  --signal: #f2c200;
-  --caution-bg: #f6e7a6;
-  --link: #1b56a0;
+  color-scheme: dark;
+  --field: #123e66;       /* dominant background */
+  --field-deep: #0b2c4a;  /* panels, code, header */
+  --field-lift: #16507f;  /* hover / raised surfaces */
+  --chalk: #eef3f7;       /* text */
+  --chalk-2: #b9cbdc;     /* secondary text (6.6:1 on field) */
+  --rule: rgba(238, 243, 247, 0.18);
+  --grid: rgba(238, 243, 247, 0.06);
+  --amber: #ffb627;       /* route, primary action, numbers (6.3:1 on field) */
+  --goal: #ff6a3d;        /* goal / robot marker and caveat flag; never text */
 
-  --font: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  --display: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
+  --font: 'Atkinson Hyperlegible', 'Verdana', sans-serif;
+  --mono: 'Martian Mono', ui-monospace, monospace;
 
-  /* One modular scale, ratio 1.25 from a 17px body. --step--1 is every small text
-     (captions, tags, labels, source lines); --step-1..3 are h3..h1 and reading values. */
-  --step--1: 0.85rem;   /* 13.6px */
-  --step-0: 1.0625rem;  /* 17px body */
-  --step-1: 1.328rem;   /* 21.25px: h3, summaries, reading values */
-  --step-2: 1.66rem;    /* 26.6px: h2 on phones, section heads */
-  --step-3: 2.075rem;   /* 33.2px: project titles on desktop */
-  --measure: 68ch;
+  /* 1.25 scale from an 18px body. */
+  --step--1: 0.85rem;
+  --step-0: 1.125rem;
+  --step-1: 1.406rem;
+  --step-2: 1.758rem;
+  --step-3: 2.197rem;
+  --step-4: 2.747rem;
+  --measure: 66ch;
 
-  /* Scroll reveals */
   --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
-  --reveal-ms: 600ms;
-
   --gutter: 16px;
   --max: 1240px;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --paper: #0f1b22;
-    --paper-2: #16252e;
-    --ink: #e2e8e6;
-    --ink-2: #9fb0b8;
-    --rule: #2a3a44;
-    --caution-bg: #2f2a10;
-    --link: #8eb9f2;
-  }
 }
 
 @media (min-width: 700px) {
   :root { --gutter: 32px; }
 }
 
-*,
-*::before,
-*::after { box-sizing: border-box; }
+*, *::before, *::after { box-sizing: border-box; }
 
-html { -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; background: var(--field-deep); }
 
+/* Atmosphere: a chart table lit from the top left. Grid lines, a cobalt glow, a deeper wash below. */
 body {
   margin: 0;
-  background: var(--paper);
-  color: var(--ink);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  color: var(--chalk);
   font-family: var(--font);
   font-size: var(--step-0);
-  font-weight: 400;
   line-height: 1.6;
   font-variant-numeric: tabular-nums;
+  background-color: var(--field);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+    radial-gradient(ellipse 80% 60% at 8% 0%, rgba(64, 140, 205, 0.35), transparent 70%),
+    linear-gradient(180deg, transparent 40%, rgba(5, 25, 45, 0.55));
+  background-size: 24px 24px, 24px 24px, 100% 100%, 100% 100%;
+  background-attachment: scroll, scroll, fixed, fixed;
   -webkit-font-smoothing: antialiased;
 }
+main { flex: 1; }
 
-/* Headings: Plex Sans 600, slightly tight, balanced so short titles don't leave a lone word. */
 h1, h2, h3 {
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  line-height: 1.2;
+  font-family: var(--display);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: 0.005em;
   text-wrap: balance;
+  margin: 0;
 }
 
+p { margin: 0 0 1rem; }
 img { max-width: 100%; height: auto; display: block; }
 
-a { color: var(--link); text-underline-offset: 0.18em; text-decoration-thickness: 1px; }
-a:hover { text-decoration-thickness: 2px; }
+a { color: var(--chalk); text-decoration-color: var(--amber); text-underline-offset: 0.2em; text-decoration-thickness: 2px; }
+a:hover { color: var(--amber); }
 
-/* Two-tone focus ring: the ink outline carries the contrast, the yellow halo makes it easy to spot. */
+/* Focus: amber ring with a deep-blue gap, visible on every surface including amber buttons. */
 :focus-visible {
-  outline: 3px solid var(--ink);
-  outline-offset: 2px;
-  box-shadow: 0 0 0 8px var(--signal);
+  outline: 3px solid var(--amber);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 3px var(--field-deep);
   border-radius: 2px;
 }
 
 code, pre, .path { font-family: var(--mono); }
-/* Mono runs large next to Plex Sans at the same size; keep paths optically level with their line. */
-.path { font-size: 0.92em; overflow-wrap: anywhere; }
+/* Martian Mono is wide; set it smaller so paths sit level with the text around them. */
+.path { font-size: 0.8em; overflow-wrap: anywhere; }
 
 .wrap {
   max-width: var(--max);
@@ -99,10 +97,10 @@ code, pre, .path { font-family: var(--mono); }
   position: absolute;
   left: var(--gutter);
   top: -100px;
-  background: var(--signal);
-  color: #13212b;
+  background: var(--amber);
+  color: var(--field-deep);
   padding: 0.5rem 0.75rem;
-  font-weight: 600;
+  font-weight: 700;
   z-index: 20;
 }
 .skip:focus { top: 0.5rem; }
@@ -114,84 +112,121 @@ code, pre, .path { font-family: var(--mono); }
   white-space: nowrap;
 }
 
-/* Repo name under a human project title: it is an identifier, so it is set in the code face. */
+/* Repo name under a readable title: an identifier, so it is set in the code face. */
 .repo {
   margin: 0;
-  color: var(--ink-2);
+  color: var(--chalk-2);
   font-family: var(--mono);
-  font-size: var(--step--1);
+  font-size: 0.78rem;
+  letter-spacing: -0.01em;
   overflow-wrap: anywhere;
 }
 
-/* Caveats are hazard-marked: they qualify the numbers next to them. */
+/* Caveats qualify the numbers next to them: an orange goal-marker flag on a deep panel. */
 .caveat {
+  position: relative;
   margin: 0;
-  padding: 0.6rem 0.8rem;
-  background: var(--caution-bg);
-  border-left: 6px solid var(--signal);
+  padding: 0.6rem 0.9rem 0.6rem 2rem;
+  background: var(--field-deep);
+  border: 1px solid var(--rule);
   font-size: var(--step--1);
   line-height: 1.5;
   max-width: var(--measure);
+}
+.caveat::before {
+  content: '';
+  position: absolute;
+  left: 0.8rem;
+  top: 0.95rem;
+  width: 0.55rem;
+  height: 0.55rem;
+  background: var(--goal);
+  transform: rotate(45deg);
 }
 
 .tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.25rem 0.9rem;
+  gap: 0.35rem;
   margin: 0;
   padding: 0;
   list-style: none;
   font-size: var(--step--1);
-  font-weight: 500;
-  color: var(--ink-2);
+  color: var(--chalk-2);
+}
+.tags li {
+  padding: 0.05rem 0.5rem;
+  border: 1px solid var(--rule);
+  border-radius: 2px;
 }
 
-.links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem 1.4rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  font-weight: 500;
+/* Buttons. Primary: amber fill (the route colour). Secondary: chalk outline. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.45rem 1.1rem;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  border: 2px solid var(--chalk);
+  border-radius: 2px;
+  color: var(--chalk);
+  background: transparent;
+  transition: background-color 150ms, color 150ms, border-color 150ms;
 }
-.links a { display: inline-block; padding-block: 0.3rem; }
+.btn:hover { background: var(--chalk); color: var(--field-deep); }
+.btn.primary { background: var(--amber); border-color: var(--amber); color: var(--field-deep); }
+.btn.primary:hover { background: var(--chalk); border-color: var(--chalk); }
+.btn.small { min-height: 40px; font-size: 1.1rem; padding: 0.3rem 0.9rem; }
+.btn-row { display: flex; flex-wrap: wrap; gap: 0.75rem; margin: 0; padding: 0; list-style: none; }
 
-/* Scroll reveals. Hidden start states exist only when the inline script has set .js on <html>
-   (so no-JS visitors see everything) and only when the visitor allows motion. The script adds
-   .is-in once per element; --d is a stagger delay in ms. Transform and opacity only. */
-@media (prefers-reduced-motion: no-preference) {
-  .js [data-reveal] {
-    opacity: 0;
-    transform: translateY(18px);
-    transition:
-      opacity var(--reveal-ms) var(--ease-out),
-      transform var(--reveal-ms) var(--ease-out);
-    transition-delay: calc(var(--d, 0) * 1ms);
-  }
-  .js [data-reveal='media'] { transform: translateY(12px) scale(0.975); transform-origin: 50% 100%; }
-  .js [data-reveal='row'] { transform: translateY(8px); }
-  .js [data-reveal].is-in { opacity: 1; transform: none; }
-}
-
-/* Reading progress: a thin signal-yellow bar, scaled by the script. Decorative. */
-.progress {
-  position: fixed;
-  inset: 0 0 auto 0;
-  height: 3px;
-  background: var(--signal);
-  transform: scaleX(0);
-  transform-origin: 0 50%;
-  z-index: 15;
+/* Detection box: amber corner brackets around evidence (images, code), as a LiDAR viewer marks objects. */
+.detect { position: relative; }
+.detect::after {
+  --c: 16px;
+  content: '';
+  position: absolute;
+  inset: -7px;
+  border: 2px solid var(--amber);
   pointer-events: none;
-  display: none;
+  -webkit-mask:
+    linear-gradient(#000 0 0) top left / var(--c) var(--c) no-repeat,
+    linear-gradient(#000 0 0) top right / var(--c) var(--c) no-repeat,
+    linear-gradient(#000 0 0) bottom left / var(--c) var(--c) no-repeat,
+    linear-gradient(#000 0 0) bottom right / var(--c) var(--c) no-repeat;
+  mask:
+    linear-gradient(#000 0 0) top left / var(--c) var(--c) no-repeat,
+    linear-gradient(#000 0 0) top right / var(--c) var(--c) no-repeat,
+    linear-gradient(#000 0 0) bottom left / var(--c) var(--c) no-repeat,
+    linear-gradient(#000 0 0) bottom right / var(--c) var(--c) no-repeat;
 }
-.js .progress { display: block; }
+
+/* Page heads on inner pages share one size. */
+.page-title {
+  font-size: clamp(3rem, 2rem + 5vw, 5.5rem);
+  line-height: 0.95;
+}
+.lede { font-size: var(--step-1); line-height: 1.45; max-width: 46ch; color: var(--chalk); }
+
+/* Load sequence: elements with .rise come up in order of --i. CSS only, so content shows without JS. */
+@media (prefers-reduced-motion: no-preference) {
+  .rise {
+    animation: rise 700ms var(--ease-out) both;
+    animation-delay: calc(var(--base, 0ms) + var(--i, 0) * 110ms);
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(22px); }
+    to { opacity: 1; transform: none; }
+  }
+}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
+    animation: none !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }

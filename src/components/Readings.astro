@@ -1,9 +1,8 @@
 ---
 // Measured results: the value with its unit, what was measured, and the file it came from.
 interface Reading { value: string; label: string; source: string }
-interface Props { items: Reading[]; caption: string; captionHidden?: boolean; reveal?: boolean }
-// reveal: rows fade in one after another (after the text column and media of a project sheet).
-const { items, caption, captionHidden = true, reveal = false } = Astro.props;
+interface Props { items: Reading[]; caption: string; captionHidden?: boolean }
+const { items, caption, captionHidden = true } = Astro.props;
 ---
 <table class="readings">
   <caption class={captionHidden ? 'visually-hidden' : ''}>{caption}</caption>
@@ -11,8 +10,8 @@ const { items, caption, captionHidden = true, reveal = false } = Astro.props;
     <tr><th scope="col">Value</th><th scope="col">What was measured, and the source file</th></tr>
   </thead>
   <tbody>
-    {items.map((r, i) => (
-      <tr data-reveal={reveal ? 'row' : undefined} style={reveal ? `--d:${200 + i * 90}` : undefined}>
+    {items.map((r) => (
+      <tr>
         <th scope="row" class="value">{r.value}</th>
         <td>
           {r.label}
@@ -32,22 +31,20 @@ const { items, caption, captionHidden = true, reveal = false } = Astro.props;
   }
   tr { border-top: 1px solid var(--rule); }
   tr:last-child { border-bottom: 1px solid var(--rule); }
-  th, td { padding: 0.65rem 0; vertical-align: baseline; text-align: left; }
+  th, td { padding: 0.8rem 0; vertical-align: baseline; text-align: left; }
+  /* Values in the display face, route amber: the numbers are what the page is for. */
   .value {
-    width: 38%;
+    width: 36%;
     padding-right: 1rem;
-    font-size: var(--step-1);
-    font-weight: 600;
-    letter-spacing: -0.01em;
-    line-height: 1.2;
-    white-space: normal;
+    font-family: var(--display);
+    font-size: var(--step-2);
+    font-weight: 700;
+    color: var(--amber);
+    line-height: 1;
+    letter-spacing: 0.01em;
   }
-  .source {
-    display: block;
-    margin-top: 0.2rem;
-    color: var(--ink-2);
-  }
+  .source { display: block; margin-top: 0.25rem; color: var(--chalk-2); }
   @media (max-width: 420px) {
-    .value { width: 40%; font-size: var(--step-0); }
+    .value { width: 40%; font-size: var(--step-1); }
   }
 </style>

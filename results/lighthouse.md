@@ -1,5 +1,18 @@
 # Lighthouse
 
+## Redesign (11.7.1, desktop preset, headless Chromium, `python3 -m http.server -d dist`), 2026-11-17
+
+| page | performance | accessibility | best practices | SEO |
+|---|---|---|---|---|
+| / | 99 | 100 | 100 | 100 |
+| /projects/ | 100 | 100 | 100 | 100 |
+| /about/ | 100 | 100 | 100 | 100 |
+| /projects/terminal-digital-twin/ | 100 | 100 | 100 | 100 |
+
+`npm run screenshots` on the same build: 0 px horizontal overflow on home, projects, a case study, about and
+404 at 360 and 1440 px; with reduced motion 0 animations run and the hero is fully visible; with JavaScript
+off the content is visible (the site ships no JS). Keyboard focus: amber 3 px outline (screenshots/focus-home-1440.png).
+
 ## After the typography and motion rework (11.7.1, desktop preset, headless Chromium, `python3 -m http.server -d dist`), 2026-11-17
 
 | page | performance | accessibility | best practices | SEO |

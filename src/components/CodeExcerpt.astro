@@ -16,8 +16,8 @@ const rows = code.split('\n').map((text, i) => ({ n: start + i, text }));
 const label = `Code from ${path}, lines ${lines}`;
 ---
 <figure class="excerpt">
-  <div class="panel" tabindex="0" role="region" aria-label={label}>
-    <pre data-lang={lang}><code>{rows.map((r) => <span class="row"><span class="n" aria-hidden="true">{r.n}</span>{r.text}</span>)}</code></pre>
+  <div class="panel detect">
+    <pre data-lang={lang} tabindex="0" role="region" aria-label={label}><code>{rows.map((r) => <span class="row"><span class="n" aria-hidden="true">{r.n}</span>{r.text}</span>)}</code></pre>
   </div>
   <figcaption>
     {caption} <a class="path" href={href}>{path}, lines {lines}</a>
@@ -26,33 +26,31 @@ const label = `Code from ${path}, lines ${lines}`;
 
 <style>
   .excerpt { margin: 0; }
-  .panel {
-    background: var(--paper-2);
-    border: 1px solid var(--rule);
-    border-radius: 3px;
-    overflow-x: auto;
-  }
+  .panel { background: var(--field-deep); }
+  /* The detection box sits outside the panel; the scroller is an inner element so it is not clipped. */
   pre {
     margin: 0;
-    padding: 0.9rem 1rem 0.9rem 0;
-    font-size: 0.8rem;
-    line-height: 1.6;
+    padding: 1rem 1rem 1rem 0;
+    font-size: 0.74rem;
+    line-height: 1.75;
     tab-size: 2;
+    overflow-x: auto;
+    color: var(--chalk);
   }
   .row { display: block; white-space: pre; }
   .n {
     display: inline-block;
-    width: 3.2em;
+    width: 3.4em;
     padding-right: 1em;
     margin-right: 0.25em;
     text-align: right;
-    color: var(--ink-2);
+    color: var(--chalk-2);
     user-select: none;
   }
   figcaption {
-    margin-top: 0.5rem;
+    margin-top: 0.75rem;
     font-size: var(--step--1);
-    color: var(--ink-2);
+    color: var(--chalk-2);
     line-height: 1.5;
     max-width: var(--measure);
   }
